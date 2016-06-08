@@ -72,7 +72,7 @@ HOME = HOME(1:length(HOME)-6);
 % -----------------------------------------------------------------------
 % design_desc = stim_ChooseDesign();%'IntR_1hand';
 % Get parameters from paramters....m
-run([HOME, 'experiments' filesep 'parameters']);
+run([HOME, 'experiments' filesep 'ld_parameters']);
 % Set param to application data collection
 % Is accessed in stim: param = getappdata(0,'...');
 % Should be removed when done using rmappdata
