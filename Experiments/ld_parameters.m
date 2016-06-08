@@ -2,6 +2,19 @@
 % Parameters for stim
 %
 
+currentOS = lower(system_dependent('getos'));
+currentKeyboard = zeros(1,256);
+
+if strfind(currentOS, 'microsoft')
+    currentKeyboard = KbName('KeyNamesWindows');
+elseif strfind(currentOS, 'linux')
+    currentKeyboard = KbName('KeyNamesOSX');
+elseif strfind(currentOS, 'osx')
+    currentKeyboard = KbName('KeyNamesLinux');
+else
+    disp('This program wont work correctly because it was not able to detect OS')
+end
+
 %% Keys = a b c d %%
 param = struct(...
     'rawDir', HOME, ... 
@@ -21,5 +34,7 @@ param = struct(...
     'language',             1, ...                  % 1 = french (default); 2 = english
     'fullscreen',           1, ...                  % 0: subwindow, 1: whole desktop => see createWindow.m for modifications
     'numMonitor',           1, ...                  % 1: two monitors, 0: 1 monitor
-    'flipMonitor',          0 ...                           
+    'flipMonitor',          0, ...           
+    'keyboard',             currentKeyboard, ...
+    'os',                   currentOS ...
 );
