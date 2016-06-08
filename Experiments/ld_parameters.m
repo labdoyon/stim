@@ -8,9 +8,9 @@ currentKeyboard = zeros(1,256);
 if strfind(currentOS, 'microsoft')
     currentKeyboard = KbName('KeyNamesWindows');
 elseif strfind(currentOS, 'linux')
-    currentKeyboard = KbName('KeyNamesOSX');
-elseif strfind(currentOS, 'osx')
     currentKeyboard = KbName('KeyNamesLinux');
+elseif strfind(currentOS, 'osx')
+    currentKeyboard = KbName('KeyNamesOSX');
 else
     disp('This program wont work correctly because it was not able to detect OS')
 end
