@@ -74,9 +74,13 @@ pause(0.1);
 
 % Wait for TTL (or keyboard input) before starting
 % FlushEvents('keyDown');
-[~, ~, keyCode] = KbCheck;
-while (keyCode(1) == 0) && (keyCode(13) == 0) && (keyCode(53) == 0) && (keyCode(84) == 0)
-    [~, ~, keyCode] = KbCheck;
+[~, ~, keyCode] = KbCheck(-1);
+
+strDecoded = ld_convertKeyCode(keyCode, param.keyboard);
+
+while isempty(strfind(strDecoded, '5'))
+    [~, ~, keyCode] = KbCheck(-1);
+    strDecoded = ld_convertKeyCode(keyCode, param.keyboard);
 end
 
 % Test all the buttons
@@ -86,14 +90,15 @@ logoriginal{length(logoriginal)}{2} = param.task;
 for nButton = 1:4
     while success == 0
         if param.language == 1 % French
-            [quit, key, time] = displayMessage(window, ['Pressez ' num2str(verif(nButton))],0,1,0,'gold',40); %message{nButton}
+            [quit, key, time] = displayMessage(param.keyboard, window, ['Pressez ' num2str(verif(nButton))],0,1,0,'gold',40);
         else % English
-            [quit, key, time] = displayMessage(window, ['Press ' num2str(verif(nButton))],0,1,0,'gold',40); %message{nButton}
+            [quit, key, time] = displayMessage(param.keyboard, window, ['Press ' num2str(verif(nButton))],0,1,0,'gold',40);
         end
         if quit break; end %#ok<SEPEX>
-
-        key = convertOneKey(key);
         
+        strDecoded = ld_convertKeyCode(key, param.keyboard);
+        key = ld_convertOneKey(strDecoded);
+
         if key == nButton
             success = 1;
         end

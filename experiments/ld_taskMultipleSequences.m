@@ -17,6 +17,8 @@ function [returnCode] = ld_taskMultipleSequences(param)
 % % Arnaud Bore 2016/02/06
 %                   ld_stim : minor modifications
 %                       
+% % Arnaud Bore 2016/09/07
+%                   ld_taskMultipleSequences
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % INIT
@@ -88,9 +90,12 @@ elseif param.language == 2
 end
 
 % Wait for TTL (or keyboard input) before starting [keyIsDown,secs,keyCode]
-[quit, ~, keyCode] = KbCheck;
-while (keyCode(1) == 0) && (keyCode(13) == 0) && (keyCode(53) == 0) && (keyCode(84) == 0)
-    [ quit, ~, keyCode] = KbCheck;
+[quit, ~, keyCode] = KbCheck(-1);
+strDecoded = ld_convertKeyCode(keyCode, param.keyboard);
+
+while isempty(strfind(strDecoded, '5'))
+    [~, ~, keyCode] = KbCheck(-1);
+    strDecoded = ld_convertKeyCode(keyCode, param.keyboard);
 end
 
 param.time = fix(clock);
@@ -113,14 +118,14 @@ logoriginal{length(logoriginal)}{2} = 'START';
         logoriginal{end}{2} = 'Rest';
         
         %     Display cross
-        [quit, keysPressed, timePressed] = displayCross(window,param.durRest,0,0,'red',100);
+        [quit, keysPressed, timePressed] = displayCross(param.keyboard, window,param.durRest,0,0,'red',100);
         
         % End Rest
         logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
         logoriginal{end}{2} = 'End Rest';
         
-        %     Convert Keys
-        [keys] = convertMultipleKeys(keysPressed);
+        % Convert Keys
+        keys = ld_convertMultipleKeys(keysPressed, param.keyboard);
         
         % Record Keys
         for nbKeys = 1:length(keys)
@@ -159,12 +164,12 @@ logoriginal{length(logoriginal)}{2} = 'START';
         % Display cross
         %   Size: 100 
         %   Wait Max: 5 seconds
-        [quit, keysPressed, timePressed] = displayCross(window,0,l_nbKey,0,'green',100,5);
+        [quit, keysPressed, timePressed] = displayCross(param.keyboard, window,0,l_nbKey,0,'green',100,5);
         
         onset.seqDur(end+1) = (GetSecs-timeStartExperience) - onset.seq(end);
         
         % Convert Keys
-        [keys] = convertMultipleKeys(keysPressed);
+        keys = ld_convertMultipleKeys(keysPressed, param.keyboard);
         
         % Find Good sequences
         str_keys = num2str(keys);
@@ -213,13 +218,13 @@ if ~quit
     onset.rest(length(onset.rest)+1) = GetSecs - timeStartExperience;
     logoriginal{length(logoriginal)+1}{1} = num2str(GetSecs - timeStartExperience);
     logoriginal{length(logoriginal)}{2} = 'Rest';
-    [quit, keysPressed, timePressed] = displayCross(window, ...
+    [quit, keysPressed, timePressed] = displayCross(param.keyboard, window, ...
                             param.durRest, 0, 0, 'red', 100); %#ok<ASGLU>
-    
-%     Conversion Key
-    [keys] = convertMultipleKeys(keysPressed);
 
-%     Record keys logoriginal
+     % Convert Keys
+     keys = ld_convertMultipleKeys(keysPressed, param.keyboard);
+
+    % Record keys logoriginal
     for nbKeys = 1:length(keys)
         logoriginal{end+1}{1} = num2str(timePressed(nbKeys) - timeStartExperience);
         logoriginal{end}{2} = 'rep';

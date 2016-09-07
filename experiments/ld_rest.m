@@ -13,6 +13,7 @@ function ld_rest(param)
 % Arnaud Boré 2012/08/11 switch toolbox psychotoolbox 3.0
 % EG March 9, 2015     
 % Arnaud Boré 2016/27/05
+% Arnaud Boré 2016/07/09 - Modification displayCross
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % INIT
@@ -21,7 +22,8 @@ window = createWindow(param);
 success = 0;
 while success == 0
     %     Display quit, key, time
-    [~, ~, ~] = displayCross(window, 0, 0, 0, 'white', 100);
+    [~, ~, ~] = displayCross(param.keyboard, window, ...
+                                                0, 0, 0, 'white', 100);
     success = 1;
 end
 

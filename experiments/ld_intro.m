@@ -65,14 +65,19 @@ elseif param.language == 2
 end
 
 % Wait for TTL (or keyboard input) before starting
-[~, ~, keyCode] = KbCheck; % keyIsDown, secs, keyCode
-while (keyCode(1) == 0) && (keyCode(13) == 0) && (keyCode(53) == 0) && (keyCode(84) == 0)
-    [~, ~, keyCode] = KbCheck; % keyIsDown, secs, keyCode
+% FlushEvents('keyDown');
+[~, ~, keyCode] = KbCheck(-1);
+
+strDecoded = ld_convertKeyCode(keyCode, param.keyboard);
+
+while isempty(strfind(strDecoded, '5'))
+    [~, ~, keyCode] = KbCheck(-1);
+    strDecoded = ld_convertKeyCode(keyCode, param.keyboard);
 end
 
 % Display Red cross
 % quit, keyPressed, TimePressed
-[quit, ~, ~] = displayCross(window, param.durRest, ...
+[quit, ~, ~] = displayCross(param.keyboard, window, param.durRest, ...
                                         0, 0, 'red', 100); % 
 
 if ~quit
@@ -86,12 +91,16 @@ if ~quit
         index = 0;
         keyTmp = [];
         while seqOK == 0
-            [quit, key, timePressed] = displayCross(window,0,1,0,'green',100);
+            [quit, key, timePressed] = displayCross(param.keyboard, window,0,1,0,'green',100);
             if quit 
                 break; 
             end
-            key = convertOneKey(key);
+            
+            strDecoded = ld_convertKeyCode(key, param.keyboard);
+            key = ld_convertOneKey(strDecoded);
 
+            disp(key)
+            
             logoriginal{end+1}{1} = num2str(timePressed - timeStartExperience);
             logoriginal{end}{2} = 'rep';
             logoriginal{end}{3} = num2str(key);

@@ -3,19 +3,6 @@
 %
 
 currentOS = lower(system_dependent('getos'));
-currentKeyboard = zeros(1,256);
-
-if strfind(currentOS, 'microsoft')
-    currentKeyboard = KbName('KeyNamesWindows');
-elseif strfind(currentOS, 'linux')
-    currentKeyboard = KbName('KeyNamesLinux');
-elseif strfind(currentOS, 'osx')
-    currentKeyboard = KbName('KeyNamesOSX');
-else
-    disp('This program wont work correctly because it was not able to detect OS')
-end
-
-param.keyboard = currentKeyboard;
 
 %% Keys = a b c d %%
 param = struct(...
@@ -39,3 +26,5 @@ param = struct(...
     'flipMonitor',          0, ...           
     'os',                   currentOS ...
 );
+
+param.keyboard = KbName('KeyNames');

@@ -80,9 +80,12 @@ end
 Screen('Flip', window);
 
 % Wait for TTL (or keyboard input) before starting
-[quit, ~, keyCode] = KbCheck;
-while (keyCode(1) == 0) && (keyCode(13) == 0) && (keyCode(53) == 0) && (keyCode(84) == 0)
-    [quit, ~, keyCode] = KbCheck;
+[quit, ~, keyCode] = KbCheck(-1);
+strDecoded = ld_convertKeyCode(keyCode, param.keyboard);
+
+while isempty(strfind(strDecoded, '5'))
+    [~, ~, keyCode] = KbCheck(-1);
+    strDecoded = ld_convertKeyCode(keyCode, param.keyboard);
 end
 
 param.time = fix(clock);
@@ -101,11 +104,11 @@ try
         logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
         logoriginal{end}{2} = 'Rest';
 
-    %     Display cross
-        [quit, keysPressed, timePressed] = displayCross(window,param.durRest,0,0,'red',100);
+        % Display cross
+        [quit, keysPressed, timePressed] = displayCross(param.keyboard, window,param.durRest,0,0,'red',100);
 
-    %     Convert Keys
-        [keys] = convertMultipleKeys(keysPressed);
+        % Convert Keys
+        keys = ld_convertMultipleKeys(keysPressed, param.keyboard);
 
         % Record Keys
         for nbKeys = 1:length(keys)
@@ -128,12 +131,12 @@ try
         logoriginal{end}{3} = ['Block', num2str(noBlock)];
         timeBlock = GetSecs - timeStartExperience;
 
-        [quit, keysPressed, timePressed] = displayCross(window,0,l_nbKey,0,'green',100);
+        [quit, keysPressed, timePressed] = displayCross(param.keyboard, window,0,l_nbKey,0,'green',100);
 
         onset.seqDur(end+1) = (GetSecs-timeStartExperience) - onset.seq(end);
 
-        % Convert Keys
-        [keys] = convertMultipleKeys(keysPressed);
+        % Convert keysPressed
+        keys = ld_convertMultipleKeys(keysPressed, param.keyboard);
 
         % Find Good sequences
         str_keys = num2str(keys);
@@ -182,8 +185,8 @@ if ~quit
     [quit, keysPressed, timePressed] = displayCross(window, ...
                                     param.durRest, 0, 0, 'red', 100);
     
-%     Conversion Key
-    [keys] = convertMultipleKeys(keysPressed);
+    % Convert keysPressed
+    keys = ld_convertMultipleKeys(keysPressed, param.keyboard);
 
 %     Record keys logoriginal
     for nbKeys = 1:length(keys)
