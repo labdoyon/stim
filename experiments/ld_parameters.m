@@ -28,3 +28,9 @@ param = struct(...
 );
 
 param.keyboard = KbName('KeyNames');
+
+if strfind(currentOS, 'microsoft')
+    LoadPsychHID
+    empties = cellfun('isempty', param.keyboard);
+    param.keyboard(empties) = 'zzz'; 
+end
