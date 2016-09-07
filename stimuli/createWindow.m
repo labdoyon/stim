@@ -6,9 +6,10 @@ function window = createWindow(param)
     % % open, and will print out a fair amount of detailed information when
     % % it does.  These commands supress that checking behavior.
     % Disable error message be carreful    
-    % Screen('Preference', 'SkipSyncTests', 1);
-    oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
-    oldSupressAllWarnings = Screen('Preference', 'SuppressAllWarnings', 1);
+    %Screen('Preference', 'SkipSyncTests', 1);
+    %Screen('Preference', 'SkipSyncTests', 1);
+    Screen('Preference', 'VisualDebugLevel', 3);
+    Screen('Preference', 'SuppressAllWarnings', 1);
     % 
     % % Find out how many screens and use largest screen number.
 

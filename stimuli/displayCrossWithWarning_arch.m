@@ -65,7 +65,7 @@ if (frequency == 0)
 
     index = 1
     while (index <= nbKeys) && (GetSecs-timeStartReading < duration) && (quit == 0)
-        [keyIsDown,secs,keyCode] = KbCheck;
+        [keyIsDown,secs,keyCode] = KbCheck(-1);
         pause(0.02);
         if ~isempty(find(keyCode))
             if (index==3)

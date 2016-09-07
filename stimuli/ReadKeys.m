@@ -1,4 +1,4 @@
-function [quit, keysPressed, timePressed] = ReadKeys(timeStartReading ,duration, nbKeys, accept_ttl, wait_max)
+function [quit, keysPressed, timePressed] = ReadKeys(currentKeyboard, timeStartReading ,duration, nbKeys, accept_ttl, wait_max)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % [quit, keysPressed, timePressed] = ReadKeys(timeStartReading ,duration, nbKeys);
 %
@@ -20,16 +20,9 @@ function [quit, keysPressed, timePressed] = ReadKeys(timeStartReading ,duration,
 % 2008/02/14:   Add "previous" input parameter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% init
-% if nargin < 6 previous = 0; end
-% if nargin < 5 keyBeep = 0; end
-% if nargin < 4 clear = 1; end
-% if nargin < 3 timeOffset = 0; end
-% if nargin < 2 nbKey = 0; end
-% if nargin < 1 duration = 0; end
-if nargin < 5 wait_max = 3600; end % Check if a subject keeps pressing button
-if nargin < 4 accept_ttl = 0; end % If we need the 5 to answer question
-if duration == 0 duration = 3600; end % Duration of ReadKey
+if nargin < 6, wait_max = 3600; end % Check if a subject keeps pressing button
+if nargin < 5, accept_ttl = 0; end % If we need the 5 to answer question
+if duration == 0, duration = 3600; end % Duration of ReadKey
 if nbKeys == 0 
     nbKeys = 3600; 
 end
@@ -42,21 +35,21 @@ timePressed = [];
     KeysWereDown = ones(1,256);
     
     while (index <= nbKeys) && (GetSecs-timeStartReading < duration) && (quit == 0) && (wait_max > GetSecs - last_event)
-        [keyIsDown, secs, keyCode] = KbCheck;
+        [keyIsDown, secs, keyCode] = KbCheck(-1);
 
         KeysPressed  = (keyCode==1) & (KeysWereDown==0);
 
         if ~isempty(find(KeysPressed))
-            if keyCode(27)  % ESC6
+            strDecoded = ld_convertKeyCode(keyCode, currentKeyboard);
+
+            if ~isempty(strfind(strDecoded, 'ESC')) % ESC6
                 quit=1;
-            elseif keyCode(53) && ~accept_ttl
+            elseif ~isempty(strfind(strDecoded, '5')) && ~accept_ttl
                  % Do not record (TTL)
-            elseif keyCode(84) && ~accept_ttl
-                 % Do not record (TTL)
-            elseif keyCode(160) && ~accept_ttl
-                 % Do not record (TTL)
+            elseif ~isempty(strfind(strDecoded, 'F'))
+                 % Do not record (F)
             else
-                tmpKeys = find(KeysPressed);
+                tmpKeys = find(keyCode);
                 for i=1:length(tmpKeys)
                     timePressed(index) = secs;
                     keysPressed(index) = tmpKeys(i);

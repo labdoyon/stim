@@ -1,4 +1,4 @@
-function [quit, keysPressed, timePressed] = displayMessage(window, message, duration, nbKeys, frequency, color, size)
+function [quit, keysPressed, timePressed] = displayMessage(currentKeyboard, window, message, duration, nbKeys, frequency, color, size)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % [quit, keysPressed, timePressed] = en_stimCross(duration, nbKeys, color,
 % size, frequence, responseBox, timeOffset)
@@ -21,12 +21,12 @@ function [quit, keysPressed, timePressed] = displayMessage(window, message, dura
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Init
-if nargin < 7 size = 100; end
-if nargin < 6 color = 'white'; end
-if nargin < 5 frequency = 0; end
-if nargin < 4 nbKeys = 0; end
-if nargin < 3 duration = 0; end
-if duration == 0 duration = 3600; end
+if nargin < 8, size = 100; end
+if nargin < 7, color = 'white'; end
+if nargin < 6, frequency = 0; end
+if nargin < 5, nbKeys = 0; end
+if nargin < 4, duration = 0; end
+if duration == 0, duration = 3600; end
 
 quit = 0;
 keysPressed = [];
@@ -54,7 +54,7 @@ if (frequency == 0)
     Screen('Flip', window);
     % Read Keyboard
     timeStartReading = GetSecs;
-    [quit, keysPressed, timePressed] = ReadKeys(timeStartReading,duration,nbKeys);
+    [quit, keysPressed, timePressed] = ReadKeys(currentKeyboard, timeStartReading, duration, nbKeys);
 
 else
     timeStartExperience = GetSecs;
@@ -67,7 +67,7 @@ else
 %         offset = GetSecs-timeStart;
         timeStartReading = GetSecs;
         
-        [quit, keysTmp, timeTmp] = ReadKeys(timeStartReading,1/frequency,0);
+        [quit, keysTmp, timeTmp] = ReadKeys(currentKeyboard, timeStartReading, 1/frequency,0);
         keysPressed = cat(2,keysPressed,keysTmp);
         timePressed = cat(2,timePressed,timeTmp);
         if quit break; end
@@ -79,7 +79,7 @@ else
         % Capture keys
 %         offset = GetSecs-timeStart;
         timeStartReading = GetSecs;
-        [quit, keysTmp, timeTmp] = ReadKeys(timeStartReading,1/frequency,0);
+        [quit, keysTmp, timeTmp] = ReadKeys(currentKeyboard, timeStartReading, 1/frequency,0);
         keysPressed = cat(2,keysPressed,keysTmp);
         timePressed = cat(2,timePressed,timeTmp);
         if quit break; end
