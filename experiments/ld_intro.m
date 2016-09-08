@@ -20,15 +20,7 @@ function [returnCode] = ld_intro(param)
 window = createWindow(param);
 
 % Get information about the task
-if strfind(param.task,'Condition_A')
-    l_seqUsed = param.seqA;
-elseif strfind(param.task, 'Condition_B')
-    l_seqUsed = param.seqB;
-elseif  strfind(param.task, 'Condition_C')
-    l_seqUsed = param.seqC;
-else
-    error(strcat('No information is available for the task >>> ', param.task, ' >>> CHECK!!!'));
-end
+l_seqUsed = param.seqA;
 
 NbSeqOK = 0;
 logoriginal = [];

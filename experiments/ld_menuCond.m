@@ -33,11 +33,7 @@ global D_EXPERIMENT;
                 ld_intro(param);
             case 4
                 param.task = ['Task - ', sessionName];
-                if strcmp(D_EXPERIMENT, 'Condition_C')
-                    ld_taskMultipleSequences(param);
-                else
-                    ld_task(param);
-                end
+                ld_task(param);
             case 5
                 break;
         end

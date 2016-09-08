@@ -44,18 +44,17 @@ Screen('TextSize',window, 40);
 gold = [255,215,0,255];
 
 % Get information about the sequence: TSeq or IntSeq
-if strfind(param.task,'Condition_A')
-    l_seqUsed = param.seqA;
-elseif strfind(param.task, 'Condition_B')
-    l_seqUsed = param.seqB;
+if strfind(param.task,'Day_One')
+    l_nbBlock = param.nbBlocksDayOne;
+elseif strfind(param.task, 'Day_Two')
+    l_nbBlock = param.nbBlocksDayTwo;
 else
     error(strcat('No information is available for the task >>> ', param.task, ' >>> CHECK!!!'));
 end
 
 % Get information about the task
-l_nbBlock = param.nbBlocks;
 l_nbKey = param.nbKeys;
-
+l_seqUsed = param.seqA;
 disp ('-------------------------------------------------------------------------------------------');
 disp(['The task ' param.task]);
 disp(['The sequence ' num2str(l_seqUsed)]);
@@ -182,7 +181,7 @@ if ~quit
     onset.rest(length(onset.rest)+1) = GetSecs - timeStartExperience;
     logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
     logoriginal{end}{2} = 'Rest';
-    [quit, keysPressed, timePressed] = displayCross(window, ...
+    [quit, keysPressed, timePressed] = displayCross(param.keyboard, window, ...
                                     param.durRest, 0, 0, 'red', 100);
     
     % Convert keysPressed
