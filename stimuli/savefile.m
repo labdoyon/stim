@@ -1,7 +1,9 @@
-function savefile(param, logoriginal, onset, seq_info, seq_matrx)
-
-if nargin<4, seq_info=[]; end %#ok<NASGU>
-if nargin<5, seq_matrx=[]; end %#ok<NASGU>
+function savefile(param, logoriginal, onset) %#ok<INUSL>
+% 
+% 
+% 
+% 
+% 
 
 i_name = 1;
 output_file_name = [param.outputDir, param.sujet,'_',param.task,'_' , num2str(i_name) ,'.mat'];
@@ -9,7 +11,7 @@ while exist(output_file_name,'file')
     i_name = i_name+1;
     output_file_name = [param.outputDir, param.sujet,'_',param.task,'_' , num2str(i_name) ,'.mat'];
 end
-save(output_file_name, 'logoriginal', 'param','seq_info','seq_matrx');   
+save(output_file_name, 'logoriginal', 'param');
 
 % Write onset
 f_onset = fopen([param.outputDir, param.sujet, '_' , param.task ,'_onset.txt'], 'a');

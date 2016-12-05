@@ -46,6 +46,8 @@ switch color
         color = [0, 0, 0, 255];
     case 'gold'
         color = [255, 215, 0, 255];
+    case 'grey'
+        color = [190 190 190];
     otherwise
         color = [255, 255, 255, 255];
 end

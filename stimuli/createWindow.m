@@ -43,10 +43,14 @@ function window = createWindow(param)
         PsychImaging('PrepareConfiguration');
         PsychImaging('AddTask','AllViews','FlipHorizontal');
         window = PsychImaging('OpenWindow', whichScreen, [], resolution);
+        Screen('FillRect', window, BlackIndex(window));
+    elseif ~isempty(strfind(param.task, 'GoNoGo'))
+        % DO NOTHING
     else
         window = Screen('OpenWindow', whichScreen, [], resolution); % full size window
+        Screen('FillRect', window, BlackIndex(window));
     end
     %%%%%%
-    Screen('FillRect', window, BlackIndex(window));
+    
 
 end
