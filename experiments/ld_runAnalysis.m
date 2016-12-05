@@ -18,14 +18,16 @@ if fname == 0
 end
 load(strcat(path,fname));
 
-if strfind(fname,'Condition_A')
+if strfind(fname,'Day_One')
     param.sequence = param.seqA; %#ok<NODEF>
-    param.task = 'Task Sequence A';
-elseif strfind(fname,'Condition_B')
-    param.sequence = param.seqB; %#ok<NODEF>
-    param.task = 'Task Sequence B';
-elseif strfind(fname,'Condition_C')
-    msgbox('Analysis for Condition_C have not been implemented yet')
+    param.task = 'Task day one';
+    param.nbBlocks = param.nbBlocksDayOne;
+elseif strfind(fname, 'Day_Two')
+    param.sequence = param.seqA; %#ok<NODEF>
+    param.task = 'Task day one';
+    param.nbBlocks = param.nbBlocksDayTwo;
+else
+    msgbox('Wrong input, contact arnaud.boreatgmail.com')
     return
 end
 %%
@@ -115,13 +117,13 @@ seqduration = NaN(noBlock,(param.nbKeys/length(param.sequence)));            % P
                                                                            % Must allocate seqdurations with NaN; but this variable is dependent on CORRECT sequences; if errors are made, there are less seqduration within a given Block
 seq_results(1,1).correct = zeros(1,noBlock);                             % Initialize; start with zero correct sequences; will sum in the code below
 
-Find3 = find(param.sequence ==3);                                          % Within the SEQ to be learned, find location of the element 3. The selection of 3 was arbitrary but the section ASSUMES that the element 3 only appears once in the sequence
+Find3 = find(param.sequence == 2);                                          % Within the SEQ to be learned, find location of the element 3. The selection of 3 was arbitrary but the section ASSUMES that the element 3 only appears once in the sequence
 
 for i = 1:1:noBlock;                                                         % i is used as counter that spans both SEQ and SEQ conditions
-    Loc3 = find(key(i,:) == Find3);                                % Within each Block, find where button 3 was pressed
+    Loc3 = find(key(i,:) == 2);                                % Within each Block, find where button 3 was pressed
     for ii = 1:1:length(Loc3)                                      % for each time the three appears
         if Loc3(ii) <= param.nbKeys - (length(param.sequence) - Find3) && (Loc3(ii) >= Find3); % Ensures that each time a 3 appears, there are enough subsequent key presses to verify if the correct sequence was executed (w/o this check, it is likely to receive error msg 'index exceeds matrix dimensions')
-            if key(i,Loc3(ii)-2) == param.sequence(find(param.sequence ==3)-2) && key(i,Loc3(ii)-1) == param.sequence(find(param.sequence ==3)-1) && key(i,Loc3(ii)+1) == param.sequence(find(param.sequence ==3)+1) && key(i,Loc3(ii)+2) == param.sequence(find(param.sequence ==3)+2);
+            if key(i,Loc3(ii)-2) == param.sequence(find(param.sequence == 2)-2) && key(i,Loc3(ii)-1) == param.sequence(find(param.sequence == 2)-1) && key(i,Loc3(ii)+1) == param.sequence(find(param.sequence == 2)+1) && key(i,Loc3(ii)+2) == param.sequence(find(param.sequence == 2)+2);
                                                                    % above line checks to make sure the appropriate sequence was executed; only valid for 5-element sequences. 
                 seq_results(1,1).correct(index) = seq_results(1,1).correct(index) + 1; % if correct sequence, add value of 1 to the count of correct sequences
                 seqduration(i,ii) = data(i,Loc3(ii)+(length(param.sequence)-Find3)) - data(i,Loc3(ii)-(Find3 - 1)); % if correct sequence, determine time it took to complete sequence           
@@ -196,24 +198,28 @@ figure; set(gcf,'Color','white'); box OFF; hold on;
 
 %% Plot Block duration
 subplot(2,2,1); 
-errorbar(1:1:length(seq_results.GOduration),seq_results.GOduration, seq_results.standard); hold on;
+% errorbar(1:1:length(seq_results.GOduration),seq_results.GOduration, seq_results.standard);
+plot(1:1:length(seq_results.GOduration),seq_results.GOduration,'+');
+hold on;
 xlabel('Blocks','FontName','Arial','FontSize',12);
 ylabel('Block duration','FontName','Arial','FontSize',12); 
 ylim([0 (max(seq_results.GOduration))+min(seq_results.GOduration)]);
-
+xlim([0 length(seq_results.GOduration)+1]);
 %% Plot correct sequences duration
 subplot(2,2,2); 
 errorbar(1:1:length(seq_results.SEQduration),seq_results.SEQduration,seq_results.SEQstandard); 
 hold on;
 xlabel('Blocks','FontName','Arial','FontSize',12); 
 ylabel('Correct Sequences duration','FontName','Arial','FontSize',12); 
-ylim([0 (max(seq_results.SEQduration))+min(seq_results.GOduration)]);
+ylim([0 (max(seq_results.SEQduration)+min(seq_results.SEQduration))]);
+xlim([0 length(seq_results.SEQduration)+1]);
 
 %% Number of correct sequences
 subplot(2,2,3);  plot(seq_results.correct,'bo','MarkerSize', 6);
 xlabel('Blocks','FontName','Arial','FontSize',12);
 ylabel('Correct Sequences','FontName','Arial','FontSize',12);
 ylim([0 (max(seq_results.correct))+3]);
+xlim([0 length(seq_results.correct)+1]);
 
 %% Plot Interkeys interval
 subplot(2,2,4)
@@ -224,16 +230,17 @@ plot(seq_results.Interval45,'ko','MarkerSize', 6); hold on;
 plot(seq_results.Interval51,'co','MarkerSize', 6); hold on;
 
 h = axis; 
-text(h(2)*1.05, h(4)*0.60,'Elem12','Color','b','FontSize',10); 
-text(h(2)*1.05, h(4)*0.55,'Elem23','Color','r','FontSize',10); 
-text(h(2)*1.05, h(4)*0.50,'Elem34','Color','g','FontSize',10); 
-text(h(2)*1.05, h(4)*0.45,'Elem45','Color','k','FontSize',10); 
-text(h(2)*1.05, h(4)*0.40,'Elem51','Color','c','FontSize',10);
+text(h(2)*1.1, h(4)*0.60,'Elem12','Color','b','FontSize',10); 
+text(h(2)*1.1, h(4)*0.55,'Elem23','Color','r','FontSize',10); 
+text(h(2)*1.1, h(4)*0.50,'Elem34','Color','g','FontSize',10); 
+text(h(2)*1.1, h(4)*0.45,'Elem45','Color','k','FontSize',10); 
+text(h(2)*1.1, h(4)*0.40,'Elem51','Color','c','FontSize',10);
 xlabel('Blocks','FontName','Arial','FontSize',12)
 ylabel('Interkeys interval','FontName','Arial','FontSize',12);
 ylim([0 (max([seq_results.Interval12, seq_results.Interval23, ...
               seq_results.Interval34, seq_results.Interval45, ...
               seq_results.Interval51]))])
+xlim([0 length(seq_results.Interval12)+1]);
 
 %% Save figure: .fig and .png
 saveas(gcf,[param.outputDir fname(1:end-3) 'fig']);

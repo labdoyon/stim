@@ -8,6 +8,7 @@ function ld_menuCond(param)
 % Arnaud Bore 2014/10/31 
 % EG March 9, 2015     
 % Arnaud Bore 2016/06/02
+% Arnaud Bore 2016/11/24 Add GoNoGo
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global D_EXPERIMENT;
     nextMenu = 1;
@@ -19,6 +20,7 @@ global D_EXPERIMENT;
                        'Verification',...
                        'Intro',...
                        'Task',...
+                       'GoNoGo', ...
                        'Quit'...
                        );
         sessionName = D_EXPERIMENT;
@@ -35,6 +37,9 @@ global D_EXPERIMENT;
                 param.task = ['Task - ', sessionName];
                 ld_task(param);
             case 5
+                param.task = ['GoNoGo - ', sessionName];
+                ld_gonogo(param);
+            case 6
                 break;
         end
     end
