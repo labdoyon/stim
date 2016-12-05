@@ -7,16 +7,12 @@ currentOS = lower(system_dependent('getos'));
 %% Keys = a b c d %%
 param = struct(...
     'rawDir', HOME, ... 
-    'outputDir',          [HOME, 'output', filesep], ...      % output directory to save data (onset and .mat)
-    'seqA',     [4 1 3 2 4], ...                    % sequence A to execute
-    'seqB',     [1 4 2 3 1], ...                    % sequence B to execute
-    'seqC', [1 1 1 1 1], ...                        % sequence C to execute
-    'seqD', [4 4 4 4 4], ...                        % sequence D to execute
-    'listSequences' , 'seqC seqD ', ...             % List for multiple sequences Task
-    'sequencesOrderMethod', 0, ...                  % 0: alternate between sequences, 1: random Sequences Order, 2 use sequencesOrder
-    'sequencesOrder', [1 2 1 2 1 2 1 2 1 2], ...    % Order of sequences used for multipleTask need to be equal to nbBlocks
-    'instructionDuration',  4, ...                  % Instruction duration
-    'nbBlocks',            10, ...                  % number of blocs during task
+    'outputDir', [HOME, 'output', filesep], ...      % output directory to save data (onset and .mat)
+    'seqA',     [1 4 2 3 1], ...                     % sequence A to execute
+    'nbBlocksDayOne',            10, ...             % number of blocs during task
+    'nbBlocksDayTwo',            8, ...              % number of blocs during task
+    'waitMax',                   2, ...             % Max wait GoNoGo
+    'ratioNoGo',                0.1, ...            % Ratio of noGo
     'nbKeys',              60, ...                  % number of keys during task
     'IntroNbSeq',           3, ...                  % nb of sequences for pre-training    
     'durRest',             25,...                   %  Duration of the Rest period
@@ -29,8 +25,8 @@ param = struct(...
 
 param.keyboard = KbName('KeyNames');
 
-if strfind(currentOS, 'microsoft')
+if strfind(currentOS,'microsoft')
     LoadPsychHID
-    empties = cellfun('isempty', param.keyboard);
-    param.keyboard(empties) = {'zzz'}; 
+    empties = cellfun('isempty',param.keyboard);
+    param.keyboard(empties) = {'zzzzz'};
 end
