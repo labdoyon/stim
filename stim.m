@@ -99,7 +99,6 @@ varargout{1} = handles.output;
 %%%%%%%%%%%
 %  Buttons 
 %%%%%%%%%%%
-
 % --- Executes on button press in buttonStart.
 function Start_experiment(D_EXPERIMENT,handles)
 
@@ -118,10 +117,10 @@ param.fullscreen = get(handles.radiobuttonFullScreenYes, 'Value');
 
 % Sequences
 param.SeqA = str2num(get(handles.editSeqA, 'String'));
-param.SeqB = str2num(get(handles.editSeqB, 'String'));
 
 % Testing
-param.nbBlocks = str2double(get(handles.editNbBlocks, 'String'));
+param.nbBlocksDayOne = str2double(get(handles.editNbBlocksDayOne, 'String'));
+param.nbBlocksDayTwo = str2double(get(handles.editNbBlocksDayTwo, 'String'));
 param.nbKeys = str2double(get(handles.editNbKeys, 'String'));
 
 % Rest
@@ -130,37 +129,30 @@ param.durRest = str2double(get(handles.editdurRest, 'String'));
 % Intro
 param.IntroNbSeq = str2double(get(handles.editIntroNbSeq, 'String'));
 
+% GoNoGo
+param.waitMax = str2double(get(handles.editwaitMax, 'String'));
+param.ratioNoGo = str2double(get(handles.editratioNoGo, 'String'));
 ld_menuExperiment(param)
 
 
 % --- Executes on button press in buttonResults
-function button_CondA_Callback(hObject, eventdata, handles)
+function button_dayone_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 global D_EXPERIMENT;
-D_EXPERIMENT = 'Condition_A';
+D_EXPERIMENT = 'Day_One';
 Start_experiment(D_EXPERIMENT,handles)
 
 % --- Executes on button press in buttonResults
-function button_CondB_Callback(hObject, eventdata, handles)
+function button_daytwo_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 global D_EXPERIMENT;
-D_EXPERIMENT = 'Condition_B';
-Start_experiment(D_EXPERIMENT,handles)
-        
-% --- Executes on button press in buttonResults
-function button_CondC_Callback(hObject, eventdata, handles)
-% hObject    handle to buttonStart (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-global D_EXPERIMENT;
-D_EXPERIMENT = 'Condition_C';
+D_EXPERIMENT = 'Day_Two';
 Start_experiment(D_EXPERIMENT,handles)
         
 % --- Executes on button press in buttonResults
@@ -187,9 +179,8 @@ close;
 function setExperimentButton(handles)
 
 % Buttons and panel properties
-set(handles.button_CondA, 'FontWeight', 'normal');
-set(handles.button_CondB, 'FontWeight', 'normal');
-set(handles.button_CondC, 'FontWeight', 'normal');
+set(handles.button_dayone, 'FontWeight', 'normal');
+set(handles.button_daytwo, 'FontWeight', 'normal');
 set(handles.uipanel_stim_Project, 'Visible', 'off');
 
 % Get param from application data collection
@@ -197,16 +188,19 @@ set(handles.uipanel_stim_Project, 'Visible', 'off');
 % Should be removed when done using rmappdata
 param = getappdata(0,'param');
 
-set(handles.editNbBlocks, 'String', num2str(param.nbBlocks));
+set(handles.editNbBlocksDayOne, 'String', num2str(param.nbBlocksDayOne));
+set(handles.editNbBlocksDayTwo, 'String', num2str(param.nbBlocksDayTwo));
 set(handles.editNbKeys, 'String', num2str(param.nbKeys));
 
 set(handles.editSeqA, 'String', num2str(param.seqA));
-set(handles.editSeqB, 'String', num2str(param.seqB));
 
 set(handles.editdurRest, 'String', num2str(param.durRest));
 set(handles.editIntroNbSeq, 'String', num2str(param.IntroNbSeq));
 
 set(handles.editOutputDir, 'String', param.outputDir);
+
+set(handles.editwaitMax, 'String', num2str(param.waitMax));
+set(handles.editratioNoGo, 'String', num2str(param.ratioNoGo));
 
 if param.fullscreen == 1
     set(handles.radiobuttonFullScreenYes, 'Value', 1);
