@@ -1,6 +1,6 @@
 # stim
 # author: arnaud.bore@gmail.com
-Stimulation program using matlab for MSL task
+Stimulation program using matlab for MSL task, needs psychtoolbox3 - http://psychtoolbox.org/
 
 1 - Add stim to matlab path
 
