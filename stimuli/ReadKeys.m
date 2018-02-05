@@ -49,7 +49,7 @@ timePressed = [];
             elseif ~isempty(strfind(strDecoded, 'F'))
                  % Do not record (F)
             else
-                tmpKeys = find(keyCode);
+                tmpKeys = find(KeysPressed);
                 for i=1:length(tmpKeys)
                     timePressed(index) = secs;
                     keysPressed(index) = tmpKeys(i);
