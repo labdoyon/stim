@@ -1,7 +1,7 @@
 function [quit, keysPressed, timePressed] = ReadKeys(currentKeyboard, timeStartReading ,duration, nbKeys, accept_ttl, wait_max)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % [quit, keysPressed, timePressed] = ReadKeys(timeStartReading ,duration, nbKeys);
-%
+
 % Record keys that have been pressed for a period of time. Reading at keys
 % using KbCheck of the Psychtoolbox. (ESC to quit)
 %
@@ -49,7 +49,7 @@ timePressed = [];
             elseif ~isempty(strfind(strDecoded, 'F'))
                  % Do not record (F)
             else
-                tmpKeys = find(keyCode);
+                tmpKeys = find(KeysPressed);
                 for i=1:length(tmpKeys)
                     timePressed(index) = secs;
                     keysPressed(index) = tmpKeys(i);
