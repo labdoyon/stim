@@ -127,8 +127,8 @@ param.outputDir = get(handles.editOutputDir, 'String');
 param.fullscreen = get(handles.radiobuttonFullScreenYes, 'Value');
 
 % Sequences
-param.SeqA = str2num(get(handles.editSeqA, 'String'));
-param.SeqB = str2num(get(handles.editSeqB, 'String'));
+param.seqA = str2num(get(handles.editSeqA, 'String'));
+param.seqB = str2num(get(handles.editSeqB, 'String'));
 
 % Testing
 param.nbBlocks = str2double(get(handles.editNbBlocks, 'String'));

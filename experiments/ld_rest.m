@@ -23,7 +23,7 @@ success = 0;
 while success == 0
     %     Display quit, key, time
     [~, ~, ~] = displayCross(param.keyboard, window, ...
-                                                0, 0, 0, 'white', 100);
+                                                param.durRest, 0, 0, 'white', 100);
     success = 1;
 end
 
