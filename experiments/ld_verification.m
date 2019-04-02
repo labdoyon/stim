@@ -21,7 +21,11 @@ function [returnCode] = ld_verification(param)
 window = createWindow(param);
 
 %image_hand = imread('C:\Lab\core_stim\stimuli\Hand.png');
-image_hand = imread([param.rawDir 'stimuli' filesep 'Hand.png']);
+if param.LeftOrRightHand == 1 % SHOULD BE MODIFIED
+    image_hand = imread([param.rawDir 'stimuli' filesep 'Hand.png']); % Left Hand
+elseif param.LeftOrRightHand == 2
+    image_hand = imread([param.rawDir 'stimuli' filesep 'Hand.png']); % Right Hand
+end
 texture_hand = Screen('MakeTexture', window, image_hand);
 
 success = 0;
