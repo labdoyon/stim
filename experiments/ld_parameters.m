@@ -9,8 +9,10 @@ param = struct(...
     'rawDir', HOME, ... 
     'outputDir',          [HOME, 'output', filesep], ...      % output directory to save data (onset and .mat)
     'seqA',     [1 4 2 3 1], ...                    % sequence A to execute
-    'nbBlocksDayOne',            10, ...                  % number of blocs during task
-    'nbBlocksDayTwo',            8, ...                  % number of blocs during task
+    'seqB',     [1 2 3 4 1], ...                    % sequence B to execute
+    'nbBlocks',                  16, ...                     % default number of blocks
+    'nbBlocksDayOne',            10, ...                  % number of blocs during task 1
+    'nbBlocksDayTwo',            8, ...                  % number of blocs during task 2
     'nbKeys',              60, ...                  % number of keys during task
     'IntroNbSeq',           3, ...                  % nb of sequences for pre-training    
     'durRest',             25,...                   %  Duration of the Rest period

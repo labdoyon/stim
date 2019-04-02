@@ -67,6 +67,16 @@ EXPERIMENT = 'stim Project';
 HOME = which('stim');
 HOME = HOME(1:length(HOME)-6);
 
+% Create Output directory if it doesn't exists
+outputDir = strcat(HOME,'output');
+if ~exist(outputDir, 'dir')
+    mkdir(outputDir) % create output dir
+end
+
+% add stimuli/ and experiments/ to the MATLAB path
+addpath(strcat(HOME,'stimuli'))
+addpath(strcat(HOME,'experiments'))
+
 % --- TO RUN ONLY ONE DESIGN --- %
 % --- should be removed if stim_ChooseDesign is used
 % -----------------------------------------------------------------------
