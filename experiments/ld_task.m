@@ -44,13 +44,15 @@ Screen('TextSize',window, 40);
 gold = [255,215,0,255];
 
 % Get information about the sequence: TSeq or IntSeq
-if strfind(param.task,'Day_One')
-    l_nbBlock = param.nbBlocksDayOne;
-elseif strfind(param.task, 'Day_Two')
-    l_nbBlock = param.nbBlocksDayTwo;
-else
-    error(strcat('No information is available for the task >>> ', param.task, ' >>> CHECK!!!'));
-end
+% if strfind(param.task,'Day_One')
+%     l_nbBlock = param.nbBlocksDayOne;
+% elseif strfind(param.task, 'Day_Two')
+%     l_nbBlock = param.nbBlocksDayTwo;
+% else
+%     error(strcat('No information is available for the task >>> ', param.task, ' >>> CHECK!!!'));
+% end
+
+l_nbBlock = param.nbBlocks;
 
 % Get information about the task
 l_nbKey = param.nbKeys;
