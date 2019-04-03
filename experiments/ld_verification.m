@@ -24,7 +24,7 @@ window = createWindow(param);
 if param.LeftOrRightHand == 1 % SHOULD BE MODIFIED
     image_hand = imread([param.rawDir 'stimuli' filesep 'leftHand.png']); % Left Hand
 elseif param.LeftOrRightHand == 2
-    image_hand = imread([param.rawDir 'stimuli' filesep 'Hand.png']); % Right Hand
+    image_hand = imread([param.rawDir 'stimuli' filesep 'rightHand.png']); % Right Hand
 end
 texture_hand = Screen('MakeTexture', window, image_hand);
 
