@@ -56,7 +56,13 @@ l_nbBlock = param.nbBlocks;
 
 % Get information about the task
 l_nbKey = param.nbKeys;
-l_seqUsed = param.seqA;
+global D_EXPERIMENT;
+if strcmp(D_EXPERIMENT,'Condition_A')
+    l_seqUsed = param.seqA;
+elseif strcmp(D_EXPERIMENT,'Condition_B')
+    l_seqUsed = param.seqB;
+end
+
 disp ('-------------------------------------------------------------------------------------------');
 disp(['The task ' param.task]);
 disp(['The sequence ' num2str(l_seqUsed)]);

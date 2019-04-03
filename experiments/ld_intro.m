@@ -20,7 +20,13 @@ function [returnCode] = ld_intro(param)
 window = createWindow(param);
 
 % Get information about the task
-l_seqUsed = param.seqA;
+% Get information about the task
+global D_EXPERIMENT;
+if strcmp(D_EXPERIMENT,'Condition_A')
+    l_seqUsed = param.seqA;
+elseif strcmp(D_EXPERIMENT,'Condition_B')
+    l_seqUsed = param.seqB;
+end
 
 NbSeqOK = 0;
 logoriginal = [];
