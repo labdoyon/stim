@@ -22,7 +22,7 @@ window = createWindow(param);
 
 %image_hand = imread('C:\Lab\core_stim\stimuli\Hand.png');
 if param.LeftOrRightHand == 1 % SHOULD BE MODIFIED
-    image_hand = imread([param.rawDir 'stimuli' filesep 'Hand.png']); % Left Hand
+    image_hand = imread([param.rawDir 'stimuli' filesep 'leftHand.png']); % Left Hand
 elseif param.LeftOrRightHand == 2
     image_hand = imread([param.rawDir 'stimuli' filesep 'Hand.png']); % Right Hand
 end
