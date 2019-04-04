@@ -111,8 +111,8 @@ varargout{1} = handles.output;
 %%%%%%%%%%%
 
 % --- Executes on button press in buttonStart.
-function Start_experiment(D_EXPERIMENT,handles)
-
+% function Start_experiment(D_EXPERIMENT,handles)
+function Start_experiment(handles)
 % Get param from application data collection
 % Is defined in stim_ChooseDesign
 % Should be removed when done using rmappdata
@@ -140,6 +140,9 @@ param.durRest = str2double(get(handles.editdurRest, 'String'));
 % Intro
 param.IntroNbSeq = str2double(get(handles.editIntroNbSeq, 'String'));
 
+global sessionNumber
+sessionNumber = 1;
+
 ld_menuExperiment(param)
 
 
@@ -149,9 +152,10 @@ function button_CondA_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-global D_EXPERIMENT;
-D_EXPERIMENT = 'Condition_A';
-Start_experiment(D_EXPERIMENT,handles)
+% global D_EXPERIMENT;
+% D_EXPERIMENT = 'Condition_A';
+% Start_experiment(D_EXPERIMENT,handles)
+Start_experiment(handles)
 
 % --- Executes on button press in buttonResults
 function button_CondB_Callback(hObject, eventdata, handles)
@@ -159,9 +163,10 @@ function button_CondB_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-global D_EXPERIMENT;
-D_EXPERIMENT = 'Condition_B';
-Start_experiment(D_EXPERIMENT,handles)
+% global D_EXPERIMENT;
+% D_EXPERIMENT = 'Condition_B';
+% Start_experiment(D_EXPERIMENT,handles)
+Start_experiment(handles)
         
 % --- Executes on button press in buttonResults
 function button_CondC_Callback(hObject, eventdata, handles)
@@ -169,9 +174,10 @@ function button_CondC_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-global D_EXPERIMENT;
-D_EXPERIMENT = 'Condition_C';
-Start_experiment(D_EXPERIMENT,handles)
+% global D_EXPERIMENT;
+% D_EXPERIMENT = 'Condition_C';
+% Start_experiment(D_EXPERIMENT,handles)
+Start_experiment(handles)
         
 % --- Executes on button press in buttonResults
 function buttonResults_Callback(hObject, eventdata, handles)

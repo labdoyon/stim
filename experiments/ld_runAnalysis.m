@@ -18,6 +18,8 @@ if fname == 0
 end
 load(strcat(path,fname));
 
+% Modifications may be brought at a later date regarding sessions replacing
+% conditions %MODIFICATION
 if strfind(fname,'Condition_A')
     param.sequence = param.seqA; %#ok<NODEF>
     param.task = 'Task Sequence A';
