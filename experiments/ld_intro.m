@@ -125,12 +125,18 @@ Screen('CloseAll');
 
 % Save file.mat
 i_name = 1;
-output_file_name = [param.outputDir, param.sujet, '_', param.task, '_', ...
-                                            num2str(i_name), '.mat'];
+if param.LeftOrRightHand == 1
+    LeftOrRightHand = 'leftHand';
+elseif param.LeftOrRightHand == 2
+    LeftOrRightHand = 'rightHand';
+end
+
+output_file_name = [param.outputDir, param.sujet,'_', LeftOrRightHand, ...
+    '_', param.task, '_', num2str(i_name),'.mat'];
 while exist(output_file_name, 'file')
     i_name = i_name+1;
-    output_file_name = [param.outputDir, param.sujet, '_', param.task, ...
-                                    '_' , num2str(i_name), '.mat'];
+    output_file_name = [param.outputDir, param.sujet,'_', ...
+        LeftOrRightHand,'_', param.task,'_', num2str(i_name),'.mat'];
 end
 save(output_file_name, 'logoriginal', 'param'); 
 
