@@ -149,6 +149,13 @@ ld_menuExperiment(param)
 
 
 % --- Executes on button press in buttonResults
+function button_NextSession_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonStart (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+Start_experiment(handles)
+
+% --- Executes on button press in buttonResults
 function button_CondA_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -180,8 +187,17 @@ function button_CondC_Callback(hObject, eventdata, handles)
 % D_EXPERIMENT = 'Condition_C';
 % Start_experiment(D_EXPERIMENT,handles)
 Start_experiment(handles)
-        
+
 % --- Executes on button press in buttonResults
+function button_validate_subject_name(hObject, eventdata, handles)
+% hObject    handle to buttonStart (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+guidata(hObject, handles);
+disp(param.sujet)
+
+
 function buttonResults_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -208,6 +224,10 @@ function setExperimentButton(handles)
 set(handles.button_CondA, 'FontWeight', 'normal');
 set(handles.button_CondB, 'FontWeight', 'normal');
 set(handles.button_CondC, 'FontWeight', 'normal');
+set(handles.button_CondA, 'String', 'Session 1');
+set(handles.button_CondB, 'String', 'Session 2');
+set(handles.button_CondC, 'String', 'Session 3');
+
 set(handles.uipanel_stim_Project, 'Visible', 'off');
 
 % Get param from application data collection
