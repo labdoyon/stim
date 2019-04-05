@@ -142,6 +142,8 @@ param.IntroNbSeq = str2double(get(handles.editIntroNbSeq, 'String'));
 
 global sessionNumber
 sessionNumber = 1;
+global GROUP;
+GROUP = subjectCodeAnalysis(param.sujet);
 
 ld_menuExperiment(param)
 
@@ -241,3 +243,6 @@ if param.flipMonitor == 1
 else
     set(handles.radiobuttonNoFlipMonitor, 'Value', 1);
 end
+
+function code = subjectCodeAnalysis(name)
+code = str2num(name(end-1:end));
