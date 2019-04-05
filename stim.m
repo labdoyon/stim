@@ -121,8 +121,7 @@ param = getappdata(0,'param');
 param.numMonitor = get(handles.radiobuttonYesSecondMonitor, 'Value');
 param.flipMonitor = get(handles.radiobuttonYesFlipMonitor, 'Value');
 
-% Common parameters        
-param.sujet = get(handles.editSubject, 'String');
+% Common parameters
 param.outputDir = get(handles.editOutputDir, 'String');
 param.fullscreen = get(handles.radiobuttonFullScreenYes, 'Value');
 
@@ -156,7 +155,7 @@ function button_NextSession_Callback(hObject, eventdata, handles)
 Start_experiment(handles)
 
 % --- Executes on button press in buttonResults
-function button_CondA_Callback(hObject, eventdata, handles)
+function button_Session1_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -167,7 +166,7 @@ function button_CondA_Callback(hObject, eventdata, handles)
 Start_experiment(handles)
 
 % --- Executes on button press in buttonResults
-function button_CondB_Callback(hObject, eventdata, handles)
+function button_Session2_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -178,7 +177,7 @@ function button_CondB_Callback(hObject, eventdata, handles)
 Start_experiment(handles)
         
 % --- Executes on button press in buttonResults
-function button_CondC_Callback(hObject, eventdata, handles)
+function button_Session3_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -194,8 +193,10 @@ function button_validate_subject_name(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-guidata(hObject, handles);
-disp(param.sujet)
+param = getappdata(0,'param');
+param.sujet = get(handles.editSubject, 'String');
+setappdata(0,'param', param);
+% ld_detectPreviousSessions(param)
 
 
 function buttonResults_Callback(hObject, eventdata, handles)
@@ -221,12 +222,9 @@ close;
 function setExperimentButton(handles)
 
 % Buttons and panel properties
-set(handles.button_CondA, 'FontWeight', 'normal');
-set(handles.button_CondB, 'FontWeight', 'normal');
-set(handles.button_CondC, 'FontWeight', 'normal');
-set(handles.button_CondA, 'String', 'Session 1');
-set(handles.button_CondB, 'String', 'Session 2');
-set(handles.button_CondC, 'String', 'Session 3');
+set(handles.button_Session1, 'FontWeight', 'normal');
+set(handles.button_Session2, 'FontWeight', 'normal');
+set(handles.button_Session3, 'FontWeight', 'normal');
 
 set(handles.uipanel_stim_Project, 'Visible', 'off');
 
