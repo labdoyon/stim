@@ -58,10 +58,15 @@ l_nbBlock = param.nbBlocks;
 l_nbKey = param.nbKeys;
 % global D_EXPERIMENT;
 % if strcmp(D_EXPERIMENT,'Condition_A')
-    l_seqUsed = param.seqA;
+%     l_seqUsed = param.seqA;
 % elseif strcmp(D_EXPERIMENT,'Condition_B')
 %     l_seqUsed = param.seqB;
 % end
+if strcmp(param.seq,'seqB')
+    l_seqUsed = param.seqB;
+else
+    l_seqUsed = param.seqA; % sequence A is used by default
+end
 
 disp ('-------------------------------------------------------------------------------------------');
 disp(['The task ' param.task]);

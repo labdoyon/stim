@@ -3,10 +3,9 @@ function ld_menuHand(param)
 % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-global GROUP;
 nextMenu = 1;
 
-if isempty(GROUP)
+if isempty(param.group)
     while nextMenu
         if param.language == 1 % langue: français
             choice = menu('Choix de main:','Main gauche','Main Droite','Quitter');
@@ -23,10 +22,24 @@ if isempty(GROUP)
         end
         ld_menuCond(param)
     end
-elseif mod(GROUP,2) % ALSO STRONGLY DEPENDENT ON SESSION
+elseif mod(param.group,2) % uneven, half of the group subjects % ALSO STRONGLY DEPENDENT ON SESSION
+    
     param.LeftOrRightHand = 1; % Left Hand
+    if mod(param.group,4)==1 % a quarter of the group subjects
+        param.seq='seqB'; % sequence B will be used
+    % elseif mod(param.group,4)==3 % another quarter of the group subjects
+    % will use sequence A
+    end
     ld_menuCond(param)
-elseif ~mod(GROUP,2) % ALSO STRONGLY DEPENDENT ON SESSION
+    
+elseif ~mod(param.group,2) % even % ALSO STRONGLY DEPENDENT ON SESSION
+    
     param.LeftOrRightHand = 2; % Right Hand
+    if mod(param.group,4) % (==2) a quarter of the group subjects
+        param.seq='seqB'; % sequence B will be used
+    % elseif ~mod(param.group,4) % (==0) another quarter of the group subjects
+    % will use sequence A
+    end
     ld_menuCond(param)
+    
 end

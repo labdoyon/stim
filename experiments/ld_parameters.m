@@ -9,8 +9,8 @@ param = struct(...
     'rawDir',           HOME, ... 
     'outputDir',        [HOME, 'output', filesep], ...      % output directory to save data (onset and .mat)
     'LeftOrRightHand',  1,...                   % 1 = Left Hand, 2 = Right Hand
-    'numberOfSequences',3,...                   % number of sequences to be performed
-    'sequenceNumber',   1,...                   % number of sequence being performed
+    'numberOfSessions',3,...                   % number of sequences to be performed
+    'sessionNumber',   1,...                   % number of sequence being performed
     'seqA',             [1 4 2 3 1], ...        % sequence A to execute
     'seqB',             [1 2 3 4 1], ...        % sequence B to execute
     'nbBlocks',         2, ...                  % number of blocs during task

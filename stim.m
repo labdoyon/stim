@@ -139,11 +139,6 @@ param.durRest = str2double(get(handles.editdurRest, 'String'));
 % Intro
 param.IntroNbSeq = str2double(get(handles.editIntroNbSeq, 'String'));
 
-global sessionNumber
-sessionNumber = 1;
-global GROUP;
-GROUP = subjectCodeAnalysis(param.sujet);
-
 ld_menuExperiment(param)
 
 
@@ -163,6 +158,10 @@ function button_Session1_Callback(hObject, eventdata, handles)
 % global D_EXPERIMENT;
 % D_EXPERIMENT = 'Condition_A';
 % Start_experiment(D_EXPERIMENT,handles)
+param = getappdata(0,'param');
+    param.sessionNumber=1;
+setappdata(0,'param', param);
+
 Start_experiment(handles)
 
 % --- Executes on button press in buttonResults
@@ -174,6 +173,10 @@ function button_Session2_Callback(hObject, eventdata, handles)
 % global D_EXPERIMENT;
 % D_EXPERIMENT = 'Condition_B';
 % Start_experiment(D_EXPERIMENT,handles)
+param = getappdata(0,'param');
+    param.sessionNumber=2;
+setappdata(0,'param', param);
+
 Start_experiment(handles)
         
 % --- Executes on button press in buttonResults
@@ -185,6 +188,10 @@ function button_Session3_Callback(hObject, eventdata, handles)
 % global D_EXPERIMENT;
 % D_EXPERIMENT = 'Condition_C';
 % Start_experiment(D_EXPERIMENT,handles)
+param = getappdata(0,'param');
+    param.sessionNumber=3;
+setappdata(0,'param', param);
+
 Start_experiment(handles)
 
 % --- Executes on button press in buttonResults
@@ -195,9 +202,34 @@ function button_validate_subject_name(hObject, eventdata, handles)
 
 param = getappdata(0,'param');
 param.sujet = get(handles.editSubject, 'String');
-setappdata(0,'param', param);
-% ld_detectPreviousSessions(param)
+param.group = subjectCodeAnalysis(param.sujet);
 
+% should result in changes to sessionNumber
+if ~isempty(param.group)
+    ld_menuHand(param)
+    ld_detectPreviousSessions(param)
+else
+    disp('Warning: subject code has not been read correctly')
+    disp('Are the last two chracters of subject name digits?')
+    param.LeftOrRightHand = 1;
+    param.sessionNumber = ld_detectPreviousSessions(param);
+    temp = param.sessionNumber;
+    param.LeftOrRightHand = 2;
+    param.sessionNumber = ld_detectPreviousSessions(param);
+    if temp>param.sessionNumber
+        param.sessionNumber = temp;
+    end
+end
+
+    set(handles.button_NextSession, 'String', strcat('Next Step: Session_',...
+    num2str(param.sessionNumber)));
+% if param.sessionNumber >= param.numberOfSessions
+%     set(handles.button_NextSession, 'String', strcat('first ',...
+%         num2str(param.sessionNumber-1), ' sessions ran',...
+%         ));
+% end
+
+setappdata(0,'param', param);
 
 function buttonResults_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
