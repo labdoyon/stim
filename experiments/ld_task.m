@@ -62,7 +62,9 @@ l_nbKey = param.nbKeys;
 % elseif strcmp(D_EXPERIMENT,'Condition_B')
 %     l_seqUsed = param.seqB;
 % end
-if strcmp(param.seq,'seqB')
+
+% test existence of param.seq and use sequence B if so specified
+if isfield(param,{'seq'}) && strcmp(param.seq,'seqB')
     l_seqUsed = param.seqB;
 else
     l_seqUsed = param.seqA; % sequence A is used by default

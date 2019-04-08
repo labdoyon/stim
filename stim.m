@@ -140,6 +140,8 @@ param.durRest = str2double(get(handles.editdurRest, 'String'));
 param.IntroNbSeq = str2double(get(handles.editIntroNbSeq, 'String'));
 
 ld_menuExperiment(param)
+param = rmfield(param,'start');
+setappdata(0,'param', param);
 
 
 % --- Executes on button press in buttonResults
@@ -147,6 +149,11 @@ function button_NextSession_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+param = getappdata(0,'param');
+    param.start = 'yes';
+setappdata(0,'param', param);
+
 Start_experiment(handles)
 
 % --- Executes on button press in buttonResults
@@ -160,6 +167,7 @@ function button_Session1_Callback(hObject, eventdata, handles)
 % Start_experiment(D_EXPERIMENT,handles)
 param = getappdata(0,'param');
     param.sessionNumber=1;
+    param.start = 'yes';
 setappdata(0,'param', param);
 
 Start_experiment(handles)
@@ -175,6 +183,7 @@ function button_Session2_Callback(hObject, eventdata, handles)
 % Start_experiment(D_EXPERIMENT,handles)
 param = getappdata(0,'param');
     param.sessionNumber=2;
+    param.start = 'yes';
 setappdata(0,'param', param);
 
 Start_experiment(handles)
@@ -190,6 +199,7 @@ function button_Session3_Callback(hObject, eventdata, handles)
 % Start_experiment(D_EXPERIMENT,handles)
 param = getappdata(0,'param');
     param.sessionNumber=3;
+    param.start = 'yes';
 setappdata(0,'param', param);
 
 Start_experiment(handles)
@@ -204,13 +214,20 @@ param = getappdata(0,'param');
 param.sujet = get(handles.editSubject, 'String');
 param.group = subjectCodeAnalysis(param.sujet);
 
-% should result in changes to sessionNumber
 if ~isempty(param.group)
-    ld_menuHand(param)
-    ld_detectPreviousSessions(param)
+    % a group has been specified
+    % we perform handChoice so we know which hand and sequence must be used
+    ld_handAndSequenceChoice(param);
+    param = getappdata(0,'param');
+    % we look through the stim/output folder to detect any previous
+    % sessions
+    param.sessionNumber = ld_detectPreviousSessions(param);
 else
+    % no group has been specified
     disp('Warning: subject code has not been read correctly')
     disp('Are the last two chracters of subject name digits?')
+    % We search for the existence of any previous session with both hands
+    % TO IMPLEMENT: test existence for any sequences as well
     param.LeftOrRightHand = 1;
     param.sessionNumber = ld_detectPreviousSessions(param);
     temp = param.sessionNumber;
@@ -221,13 +238,8 @@ else
     end
 end
 
-    set(handles.button_NextSession, 'String', strcat('Next Step: Session_',...
-    num2str(param.sessionNumber)));
-% if param.sessionNumber >= param.numberOfSessions
-%     set(handles.button_NextSession, 'String', strcat('first ',...
-%         num2str(param.sessionNumber-1), ' sessions ran',...
-%         ));
-% end
+set(handles.button_NextSession, 'String', strcat('Next Step: Session_',...
+num2str(param.sessionNumber)));
 
 setappdata(0,'param', param);
 
