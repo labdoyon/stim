@@ -20,13 +20,12 @@ function [returnCode] = ld_intro(param)
 window = createWindow(param);
 
 % Get information about the task
-% Get information about the task
-% global D_EXPERIMENT;
-% if strcmp(D_EXPERIMENT,'Condition_A')
-    l_seqUsed = param.seqA;
-% elseif strcmp(D_EXPERIMENT,'Condition_B')
-%     l_seqUsed = param.seqB;
-% end
+% test existence of param.seq and use sequence B if so specified
+if isfield(param,{'seq'}) && strcmp(param.seq,'seqB')
+    l_seqUsed = param.seqB;
+else
+    l_seqUsed = param.seqA; % sequence A is used by default
+end
 
 NbSeqOK = 0;
 logoriginal = [];

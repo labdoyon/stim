@@ -3,6 +3,11 @@ function ld_handAndSequenceChoice(param)
 % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% sequence A is the default parameter, when it is used, there iscnothing to
+% modify
+
+% Left Hand is the default parameter, when it is used, there is nothing to
+% modify
 nextMenu = 1;
 
 if isempty(param.group)
@@ -27,30 +32,51 @@ if isempty(param.group)
         end
     end
 
-elseif mod(param.group,2) % uneven, half of the group subjects % ALSO STRONGLY DEPENDENT ON SESSION
+elseif mod(param.group,2) % uneven group number, half of the subjects
     
     % a group has been specified, therefore, automatic hand choice and
     % sequence choice are performed by the function, no menu is proposed
-    param.LeftOrRightHand = 1; % Left Hand
-    if mod(param.group,4)==1 % a quarter of the group subjects
-        param.seq='seqB'; % sequence B will be used
-    % elseif mod(param.group,4)==3 % another quarter of the group subjects
-    % will use sequence A
+    
+    % sequence A is used by default, sequence B is used if we are
+    % performing the last two sessions
+    if any(param.sessionNumber == param.sessions(end-1:end))
+        param.seq='seqB';
     end
-    setappdata(0,'param', param);
+    
+    % a quarter of the subjects use their right hand in the first of the
+    % last two sessions
+    % another quarter of the subjects use their right hand in the last of
+    % the last two sessions
+    if or(mod(param.group,4)==1 && param.sessionNumber == param.sessions(end-1),...
+            mod(param.group,4)==3 && param.sessionNumber == param.sessions(end))
+        param.LeftOrRightHand = 2; % Right Hand
+    end
 
-elseif ~mod(param.group,2) % even % ALSO STRONGLY DEPENDENT ON SESSION
+elseif ~mod(param.group,2) % even group number, half of the subjects
     
     % a group has been specified, therefore, automatic hand choice and
     % sequence choice are performed by the function, no menu is proposed
+    
+    % sequence B is used by default, sequence A is used if we are
+    % performing the last two sessions
+    if not(any(param.sessionNumber == param.sessions(end-1:end)))
+        param.seq='seqB'; % sequence B will be used
+    end
+    
+    % a quarter of the subjects use their right hand in the first of the
+    % last two sessions
+    % another quarter of the subjects use their right hand in the last of
+    % the last two sessions
+    if or(mod(param.group,4) && param.sessionNumber == param.sessions(end-1),... % (mod(param.group,4)==2) a quarter of the group subjects
+            ~mod(param.group,4) && param.sessionNumber == param.sessions(end)) % (mod(param.group,4)==0) a quarter of the group subjects
+        param.LeftOrRightHand = 2; % Right Hand
+    end
+
+end
+
+% Right hand is always used in the case of the antepenultimate session
+if or(mod(param.group,2),~mod(param.group,2)) && param.sessionNumber == param.sessions(end-2)
     param.LeftOrRightHand = 2; % Right Hand
-    if mod(param.group,4) % (==2) a quarter of the group subjects
-        param.seq='seqB'; % sequence B will be used
-    % elseif ~mod(param.group,4) % (==0) another quarter of the group subjects
-    % will use sequence A
-    end
-    setappdata(0,'param', param);
-
 end
 
 % if sessionNumber has been set and a start button has been pressed, launch

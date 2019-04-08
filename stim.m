@@ -216,9 +216,11 @@ param.group = subjectCodeAnalysis(param.sujet);
 
 if ~isempty(param.group)
     % a group has been specified
-    % we perform handChoice so we know which hand and sequence must be used
-    ld_handAndSequenceChoice(param);
-    param = getappdata(0,'param');
+    
+%     % we perform handChoice so we know which hand and sequence must be used
+%     ld_handAndSequenceChoice(param);
+%     param = getappdata(0,'param');
+
     % we look through the stim/output folder to detect any previous
     % sessions
     param.sessionNumber = ld_detectPreviousSessions(param);
@@ -226,16 +228,6 @@ else
     % no group has been specified
     disp('Warning: subject code has not been read correctly')
     disp('Are the last two chracters of subject name digits?')
-    % We search for the existence of any previous session with both hands
-    % TO IMPLEMENT: test existence for any sequences as well
-    param.LeftOrRightHand = 1;
-    param.sessionNumber = ld_detectPreviousSessions(param);
-    temp = param.sessionNumber;
-    param.LeftOrRightHand = 2;
-    param.sessionNumber = ld_detectPreviousSessions(param);
-    if temp>param.sessionNumber
-        param.sessionNumber = temp;
-    end
 end
 
 set(handles.button_NextSession, 'String', strcat('Next Step: Session_',...
