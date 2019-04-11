@@ -23,9 +23,11 @@ if isempty(param.group)
         switch choice
             case 1
                 param.LeftOrRightHand = 1;
+                disp('Left hand will be used');
                 break
             case 2
                 param.LeftOrRightHand = 2;
+                disp('Right hand will be used');
                 break
             case 3
                 break
@@ -50,6 +52,9 @@ elseif mod(param.group,2) % uneven group number, half of the subjects
     if or(mod(param.group,4)==1 && param.sessionNumber == param.sessions(end-1),...
             mod(param.group,4)==3 && param.sessionNumber == param.sessions(end))
         param.LeftOrRightHand = 2; % Right Hand
+        disp('Right hand will be used');
+    elseif param.sessionNumber ~= param.sessions(end-2)
+        disp('Left hand will be used');
     end
 
 elseif ~mod(param.group,2) % even group number, half of the subjects
@@ -70,6 +75,9 @@ elseif ~mod(param.group,2) % even group number, half of the subjects
     if or(mod(param.group,4) && param.sessionNumber == param.sessions(end-1),... % (mod(param.group,4)==2) a quarter of the group subjects
             ~mod(param.group,4) && param.sessionNumber == param.sessions(end)) % (mod(param.group,4)==0) a quarter of the group subjects
         param.LeftOrRightHand = 2; % Right Hand
+        disp('Right hand will be used');
+    elseif param.sessionNumber ~= param.sessions(end-2)
+        disp('Left hand will be used');
     end
 
 end
@@ -78,6 +86,7 @@ end
 if ~isempty(param.group)
     if or(mod(param.group,2),~mod(param.group,2)) && param.sessionNumber == param.sessions(end-2)
         param.LeftOrRightHand = 2; % Right Hand
+        disp('Right hand will be used');
     end
 end
 
