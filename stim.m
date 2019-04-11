@@ -189,7 +189,7 @@ setappdata(0,'param', param);
 Start_experiment(handles)
         
 % --- Executes on button press in buttonResults
-function button_Session3_Callback(hObject, eventdata, handles)
+function button_Session3_1_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -198,7 +198,55 @@ function button_Session3_Callback(hObject, eventdata, handles)
 % D_EXPERIMENT = 'Condition_C';
 % Start_experiment(D_EXPERIMENT,handles)
 param = getappdata(0,'param');
-    param.sessionNumber=3;
+    param.sessionNumber=3.1;
+    param.start = 'yes';
+setappdata(0,'param', param);
+
+Start_experiment(handles)
+
+% --- Executes on button press in buttonResults
+function button_Session3_2_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonStart (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% global D_EXPERIMENT;
+% D_EXPERIMENT = 'Condition_C';
+% Start_experiment(D_EXPERIMENT,handles)
+param = getappdata(0,'param');
+    param.sessionNumber=3.2;
+    param.start = 'yes';
+setappdata(0,'param', param);
+
+Start_experiment(handles)
+
+% --- Executes on button press in buttonResults
+function button_Session3_3_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonStart (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% global D_EXPERIMENT;
+% D_EXPERIMENT = 'Condition_C';
+% Start_experiment(D_EXPERIMENT,handles)
+param = getappdata(0,'param');
+    param.sessionNumber=3.3;
+    param.start = 'yes';
+setappdata(0,'param', param);
+
+Start_experiment(handles)
+
+% --- Executes on button press in buttonResults
+function button_Session3_4_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonStart (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% global D_EXPERIMENT;
+% D_EXPERIMENT = 'Condition_C';
+% Start_experiment(D_EXPERIMENT,handles)
+param = getappdata(0,'param');
+    param.sessionNumber=3.4;
     param.start = 'yes';
 setappdata(0,'param', param);
 
