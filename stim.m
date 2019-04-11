@@ -130,7 +130,7 @@ param.seqA = str2num(get(handles.editSeqA, 'String'));
 param.seqB = str2num(get(handles.editSeqB, 'String'));
 
 % Testing
-param.nbBlocks = str2double(get(handles.editNbBlocks, 'String'));
+% param.nbBlocks = str2double(get(handles.editNbBlocks, 'String'));
 param.nbKeys = str2double(get(handles.editNbKeys, 'String'));
 
 % Rest
@@ -320,7 +320,7 @@ set(handles.uipanel_stim_Project, 'Visible', 'off');
 % Should be removed when done using rmappdata
 param = getappdata(0,'param');
 
-set(handles.editNbBlocks, 'String', num2str(param.nbBlocks));
+% set(handles.editNbBlocks, 'String', num2str(param.nbBlocks));
 set(handles.editNbKeys, 'String', num2str(param.nbKeys));
 
 set(handles.editSeqA, 'String', num2str(param.seqA));

@@ -75,8 +75,10 @@ elseif ~mod(param.group,2) % even group number, half of the subjects
 end
 
 % Right hand is always used in the case of the antepenultimate session
-if or(mod(param.group,2),~mod(param.group,2)) && param.sessionNumber == param.sessions(end-2)
-    param.LeftOrRightHand = 2; % Right Hand
+if ~isempty(param.group)
+    if or(mod(param.group,2),~mod(param.group,2)) && param.sessionNumber == param.sessions(end-2)
+        param.LeftOrRightHand = 2; % Right Hand
+    end
 end
 
 % if sessionNumber has been set and a start button has been pressed, launch
