@@ -308,7 +308,10 @@ function setExperimentButton(handles)
 % Buttons and panel properties
 set(handles.button_Session1, 'FontWeight', 'normal');
 set(handles.button_Session2, 'FontWeight', 'normal');
-set(handles.button_Session3, 'FontWeight', 'normal');
+set(handles.button_Session3_1, 'FontWeight', 'normal');
+set(handles.button_Session3_2, 'FontWeight', 'normal');
+set(handles.button_Session3_3, 'FontWeight', 'normal');
+set(handles.button_Session3_4, 'FontWeight', 'normal');
 
 set(handles.uipanel_stim_Project, 'Visible', 'off');
 
