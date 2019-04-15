@@ -30,6 +30,7 @@ texture_hand = Screen('MakeTexture', window, image_hand);
 
 success = 0;
 
+% WARNING: THIS HAS CHANGED, CURRENTLY IMPLEMENTING CHANGES
 if param.language == 1 % if French
     message = {
                 '1 = Auriclaire',...
