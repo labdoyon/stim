@@ -20,13 +20,12 @@ function [returnCode] = ld_intro(param)
 window = createWindow(param);
 
 % Get information about the task
-% Get information about the task
-% global D_EXPERIMENT;
-% if strcmp(D_EXPERIMENT,'Condition_A')
-    l_seqUsed = param.seqA;
-% elseif strcmp(D_EXPERIMENT,'Condition_B')
-%     l_seqUsed = param.seqB;
-% end
+% test existence of param.seq and use sequence B if so specified
+if isfield(param,{'seq'}) && strcmp(param.seq,'seqB')
+    l_seqUsed = param.seqB;
+else
+    l_seqUsed = param.seqA; % sequence A is used by default
+end
 
 NbSeqOK = 0;
 logoriginal = [];
@@ -125,18 +124,20 @@ Screen('CloseAll');
 
 % Save file.mat
 i_name = 1;
-if param.LeftOrRightHand == 1
-    LeftOrRightHand = 'leftHand';
-elseif param.LeftOrRightHand == 2
-    LeftOrRightHand = 'rightHand';
-end
+% if param.LeftOrRightHand == 1
+%     LeftOrRightHand = 'leftHand';
+% elseif param.LeftOrRightHand == 2
+%     LeftOrRightHand = 'rightHand';
+% end
 
-output_file_name = [param.outputDir, param.sujet,'_', LeftOrRightHand, ...
-    '_', param.task, '_', num2str(i_name),'.mat'];
+% output_file_name = [param.outputDir, param.sujet,'_', LeftOrRightHand, ...
+%     '_', param.task, '_', num2str(i_name),'.mat'];
+output_file_name = [param.outputDir, param.sujet,'_', param.task, '_',...
+    num2str(i_name),'.mat'];
 while exist(output_file_name, 'file')
     i_name = i_name+1;
-    output_file_name = [param.outputDir, param.sujet,'_', ...
-        LeftOrRightHand,'_', param.task,'_', num2str(i_name),'.mat'];
+    output_file_name = [param.outputDir, param.sujet,'_', param.task, '_',...
+        num2str(i_name),'.mat'];
 end
 save(output_file_name, 'logoriginal', 'param'); 
 

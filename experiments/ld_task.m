@@ -52,16 +52,16 @@ gold = [255,215,0,255];
 %     error(strcat('No information is available for the task >>> ', param.task, ' >>> CHECK!!!'));
 % end
 
-l_nbBlock = param.nbBlocks;
-
 % Get information about the task
+l_nbBlock = param.sessionBlocksNumber(param.sessions==param.sessionNumber);
 l_nbKey = param.nbKeys;
-% global D_EXPERIMENT;
-% if strcmp(D_EXPERIMENT,'Condition_A')
-    l_seqUsed = param.seqA;
-% elseif strcmp(D_EXPERIMENT,'Condition_B')
-%     l_seqUsed = param.seqB;
-% end
+
+% test existence of param.seq and use sequence B if so specified
+if isfield(param,{'seq'}) && strcmp(param.seq,'seqB')
+    l_seqUsed = param.seqB;
+else
+    l_seqUsed = param.seqA; % sequence A is used by default
+end
 
 disp ('-------------------------------------------------------------------------------------------');
 disp(['The task ' param.task]);

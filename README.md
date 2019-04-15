@@ -9,14 +9,15 @@ Stimulation program using matlab for MSL task
 # Dependencies
 
 2 - Psychtoolbox : Download Psychtoolbox by executing DownloadPsychtoolbox.m, stim won't run without it
+
 2bis - Download Gstreamer if you are using Windows/OSX
 
-2 - Run stim command
+3 - Run stim command
 please note this will add experiments/ and stimuli/ to the MATLAB path
 
-3 - Modify parameters if needed
+4 - Modify parameters if needed
 
-4 - Click on condition A, B or C
+5 - to be updated
 
 5 - Choose English -> Verification
 

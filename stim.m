@@ -121,8 +121,7 @@ param = getappdata(0,'param');
 param.numMonitor = get(handles.radiobuttonYesSecondMonitor, 'Value');
 param.flipMonitor = get(handles.radiobuttonYesFlipMonitor, 'Value');
 
-% Common parameters        
-param.sujet = get(handles.editSubject, 'String');
+% Common parameters
 param.outputDir = get(handles.editOutputDir, 'String');
 param.fullscreen = get(handles.radiobuttonFullScreenYes, 'Value');
 
@@ -131,7 +130,7 @@ param.seqA = str2num(get(handles.editSeqA, 'String'));
 param.seqB = str2num(get(handles.editSeqB, 'String'));
 
 % Testing
-param.nbBlocks = str2double(get(handles.editNbBlocks, 'String'));
+% param.nbBlocks = str2double(get(handles.editNbBlocks, 'String'));
 param.nbKeys = str2double(get(handles.editNbKeys, 'String'));
 
 % Rest
@@ -140,16 +139,25 @@ param.durRest = str2double(get(handles.editdurRest, 'String'));
 % Intro
 param.IntroNbSeq = str2double(get(handles.editIntroNbSeq, 'String'));
 
-global sessionNumber
-sessionNumber = 1;
-global GROUP;
-GROUP = subjectCodeAnalysis(param.sujet);
-
 ld_menuExperiment(param)
+param = rmfield(param,'start');
+setappdata(0,'param', param);
 
 
 % --- Executes on button press in buttonResults
-function button_CondA_Callback(hObject, eventdata, handles)
+function button_NextSession_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonStart (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+param = getappdata(0,'param');
+    param.start = 'yes';
+setappdata(0,'param', param);
+
+Start_experiment(handles)
+
+% --- Executes on button press in buttonResults
+function button_Session1_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -157,10 +165,15 @@ function button_CondA_Callback(hObject, eventdata, handles)
 % global D_EXPERIMENT;
 % D_EXPERIMENT = 'Condition_A';
 % Start_experiment(D_EXPERIMENT,handles)
+param = getappdata(0,'param');
+    param.sessionNumber=1;
+    param.start = 'yes';
+setappdata(0,'param', param);
+
 Start_experiment(handles)
 
 % --- Executes on button press in buttonResults
-function button_CondB_Callback(hObject, eventdata, handles)
+function button_Session2_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -168,10 +181,15 @@ function button_CondB_Callback(hObject, eventdata, handles)
 % global D_EXPERIMENT;
 % D_EXPERIMENT = 'Condition_B';
 % Start_experiment(D_EXPERIMENT,handles)
+param = getappdata(0,'param');
+    param.sessionNumber=2;
+    param.start = 'yes';
+setappdata(0,'param', param);
+
 Start_experiment(handles)
         
 % --- Executes on button press in buttonResults
-function button_CondC_Callback(hObject, eventdata, handles)
+function button_Session3_1_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -179,9 +197,92 @@ function button_CondC_Callback(hObject, eventdata, handles)
 % global D_EXPERIMENT;
 % D_EXPERIMENT = 'Condition_C';
 % Start_experiment(D_EXPERIMENT,handles)
+param = getappdata(0,'param');
+    param.sessionNumber=3.1;
+    param.start = 'yes';
+setappdata(0,'param', param);
+
 Start_experiment(handles)
-        
+
 % --- Executes on button press in buttonResults
+function button_Session3_2_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonStart (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% global D_EXPERIMENT;
+% D_EXPERIMENT = 'Condition_C';
+% Start_experiment(D_EXPERIMENT,handles)
+param = getappdata(0,'param');
+    param.sessionNumber=3.2;
+    param.start = 'yes';
+setappdata(0,'param', param);
+
+Start_experiment(handles)
+
+% --- Executes on button press in buttonResults
+function button_Session3_3_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonStart (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% global D_EXPERIMENT;
+% D_EXPERIMENT = 'Condition_C';
+% Start_experiment(D_EXPERIMENT,handles)
+param = getappdata(0,'param');
+    param.sessionNumber=3.3;
+    param.start = 'yes';
+setappdata(0,'param', param);
+
+Start_experiment(handles)
+
+% --- Executes on button press in buttonResults
+function button_Session3_4_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonStart (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% global D_EXPERIMENT;
+% D_EXPERIMENT = 'Condition_C';
+% Start_experiment(D_EXPERIMENT,handles)
+param = getappdata(0,'param');
+    param.sessionNumber=3.4;
+    param.start = 'yes';
+setappdata(0,'param', param);
+
+Start_experiment(handles)
+
+% --- Executes on button press in buttonResults
+function button_validate_subject_name(hObject, eventdata, handles)
+% hObject    handle to buttonStart (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+param = getappdata(0,'param');
+param.sujet = get(handles.editSubject, 'String');
+param.group = subjectCodeAnalysis(param.sujet);
+
+if ~isempty(param.group)
+    % a group has been specified
+    
+%     % we perform handChoice so we know which hand and sequence must be used
+%     ld_handAndSequenceChoice(param);
+%     param = getappdata(0,'param');
+
+    % we look through the stim/output folder to detect any previous
+    % sessions
+    param.sessionNumber = ld_detectPreviousSessions(param);
+else
+    % no group has been specified
+    disp('Warning: subject code has not been read correctly')
+    disp('Are the last two chracters of subject name digits?')
+end
+
+set(handles.button_NextSession, 'String', strcat('Next Step: Session_',...
+num2str(param.sessionNumber)));
+
+setappdata(0,'param', param);
+
 function buttonResults_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -205,9 +306,13 @@ close;
 function setExperimentButton(handles)
 
 % Buttons and panel properties
-set(handles.button_CondA, 'FontWeight', 'normal');
-set(handles.button_CondB, 'FontWeight', 'normal');
-set(handles.button_CondC, 'FontWeight', 'normal');
+set(handles.button_Session1, 'FontWeight', 'normal');
+set(handles.button_Session2, 'FontWeight', 'normal');
+set(handles.button_Session3_1, 'FontWeight', 'normal');
+set(handles.button_Session3_2, 'FontWeight', 'normal');
+set(handles.button_Session3_3, 'FontWeight', 'normal');
+set(handles.button_Session3_4, 'FontWeight', 'normal');
+
 set(handles.uipanel_stim_Project, 'Visible', 'off');
 
 % Get param from application data collection
@@ -215,7 +320,7 @@ set(handles.uipanel_stim_Project, 'Visible', 'off');
 % Should be removed when done using rmappdata
 param = getappdata(0,'param');
 
-set(handles.editNbBlocks, 'String', num2str(param.nbBlocks));
+% set(handles.editNbBlocks, 'String', num2str(param.nbBlocks));
 set(handles.editNbKeys, 'String', num2str(param.nbKeys));
 
 set(handles.editSeqA, 'String', num2str(param.seqA));

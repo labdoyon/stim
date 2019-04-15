@@ -10,13 +10,13 @@ function ld_menuCond(param)
 % Arnaud Bore 2016/06/02
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % global D_EXPERIMENT;
-global sessionNumber
-sessionName = strcat('sesssionN', num2str(sessionNumber));
+
+sessionName = strcat('sesssionN', num2str(param.sessionNumber));
     nextMenu = 1;
     
     while nextMenu
         choice = menu(...
-                       strcat('Menu - 4', sessionName),... %                        strcat('Menu - ', D_EXPERIMENT),...
+                       strcat('Menu - ', sessionName),... %                        strcat('Menu - ', D_EXPERIMENT),...
                        'Rest', ...  
                        'Verification',...
                        'Intro',...
@@ -34,7 +34,7 @@ sessionName = strcat('sesssionN', num2str(sessionNumber));
                 param.task = ['Intro - ', sessionName];
                 ld_intro(param);
             case 4
-                param.task = ['Task - ', sessionName];
+                param.task = ['Task - ', sessionName]; % I need to implement choice of TaskA or TaskB
                 ld_task(param);
             case 5
                 break;
