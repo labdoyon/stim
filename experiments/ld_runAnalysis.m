@@ -51,6 +51,9 @@ for nLine = 1:length(logoriginal) %#ok<USENS>
         else
             stimulus.stop(counter) = str2double(logoriginal{nLine}{1});
             counter = counter + 1;
+            if counter>param.nbBlocks;break;end % we have received the "stop"
+            % signal corresponding to the last desired block. Following is
+            % either willingly excluded blocks or an incomplete Block.
         end
     end % IF loop
          
@@ -58,13 +61,22 @@ for nLine = 1:length(logoriginal) %#ok<USENS>
         data(noBlock,index) = str2double(logoriginal{nLine}{1});                 
         key(noBlock,index) = str2double(logoriginal{nLine}{3});
         index = index + 1;                                                  % counter
-        if index > param.nbKeys && noBlock < param.nbBlocks                 % if counter = number of key presses within each Block
-            index = 1;                                                      % reset counter
-            noBlock = noBlock + 1;
+        if index > param.nbKeys
+            if noBlock < param.nbBlocks                 % if counter = number of key presses within each Block
+                index = 1;                                                      % reset counter
+                noBlock = noBlock + 1;
+            % else % noBlock >= param.nbBlocks
+                % this means we have gathered all the data, if we find
+                % more, this will be the last blocks that have not been
+                % included, either deliberately, or the last block that is
+                % excluded for being incomplete
+            end
         end % IF loop
     end % IF loop
 end % FOR loop
 clear index; clear flag; clear nLine; clear counter;                        % tidy workspace
+
+noBlock
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,22 +121,33 @@ clear index; clear i; clear interval; clear nKey;  % tidy workspace
 %%% and proceed only with the dependnet variables listed in SECTION 3   %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-index = 1;                                                                 % used as counter in loop; used to count # of Blocks within a condition (SEQ or SEQ)
+index = 1;
+% used as counter in loop; used to count # of Blocks within a condition (SEQ or SEQ)
+lenSeq = length(param.sequence);
 
-seqduration = NaN(noBlock,(param.nbKeys/length(param.sequence)));            % Preallocate; sets variable with dimensions TOTAL Block # x THE NUMBER OF SEQUENCE REPETITIONS WITHIN A GIVEN Block (I.E., KEY PRESSES / NUMBER OF ELEMENTS IN THE SEQUENCE)
+seqduration = NaN(noBlock,(param.nbKeys/lenSeq));            % Preallocate; sets variable with dimensions TOTAL Block # x THE NUMBER OF SEQUENCE REPETITIONS WITHIN A GIVEN Block (I.E., KEY PRESSES / NUMBER OF ELEMENTS IN THE SEQUENCE)
                                                                            % Must allocate seqdurations with NaN; but this variable is dependent on CORRECT sequences; if errors are made, there are less seqduration within a given Block
 seq_results(1,1).correct = zeros(1,noBlock);                             % Initialize; start with zero correct sequences; will sum in the code below
 
-Find3 = find(param.sequence ==3);                                          % Within the SEQ to be learned, find location of the element 3. The selection of 3 was arbitrary but the section ASSUMES that the element 3 only appears once in the sequence
+key3position = find(param.sequence == 3);
+% Within the SEQ to be learned, find location of the element 3. 
+% The selection of 3 is arbitrary but ASSUMES that element 3 only appears
+% once in the sequence
 
-for i = 1:1:noBlock;                                                         % i is used as counter that spans both SEQ and SEQ conditions
-    Loc3 = find(key(i,:) == Find3);                                % Within each Block, find where button 3 was pressed
+RangeToCheck = 1-key3position:lenSeq-key3position ;
+RangeToCheck(RangeToCheck==0)=[];
+% range of values near key 3 to check in order to assess
+% the validity of the sequence, e.g. [-2,-1,1,2]
+
+for i = 1:1:noBlock                                                        % i is used as counter that spans both SEQ and SEQ conditions
+    Loc3 = find(key(i,:) == 3);                                % Within each Block, find where button 3 was pressed
     for ii = 1:1:length(Loc3)                                      % for each time the three appears
-        if Loc3(ii) <= param.nbKeys - (length(param.sequence) - Find3) && (Loc3(ii) >= Find3); % Ensures that each time a 3 appears, there are enough subsequent key presses to verify if the correct sequence was executed (w/o this check, it is likely to receive error msg 'index exceeds matrix dimensions')
-            if key(i,Loc3(ii)-2) == param.sequence(find(param.sequence ==3)-2) && key(i,Loc3(ii)-1) == param.sequence(find(param.sequence ==3)-1) && key(i,Loc3(ii)+1) == param.sequence(find(param.sequence ==3)+1) && key(i,Loc3(ii)+2) == param.sequence(find(param.sequence ==3)+2);
-                                                                   % above line checks to make sure the appropriate sequence was executed; only valid for 5-element sequences. 
+        if Loc3(ii) <= param.nbKeys - (lenSeq - key3position) && (Loc3(ii) >= key3position) % Ensures that each time a 3 appears, there are enough subsequent key presses to verify if the correct sequence was executed (w/o this check, it is likely to receive error msg 'index exceeds matrix dimensions')
+            if key(i,Loc3(ii)+RangeToCheck) == param.sequence(key3position+RangeToCheck)
+              % if key(i,Loc3(ii)-2) == param.sequence(find(param.sequence ==3)-2) && key(i,Loc3(ii)-1) == param.sequence(find(param.sequence ==3)-1) && key(i,Loc3(ii)+1) == param.sequence(find(param.sequence ==3)+1) && key(i,Loc3(ii)+2) == param.sequence(find(param.sequence ==3)+2);
+              % above line checks to make sure the appropriate sequence was executed; only valid for 5-element sequences. 
                 seq_results(1,1).correct(index) = seq_results(1,1).correct(index) + 1; % if correct sequence, add value of 1 to the count of correct sequences
-                seqduration(i,ii) = data(i,Loc3(ii)+(length(param.sequence)-Find3)) - data(i,Loc3(ii)-(Find3 - 1)); % if correct sequence, determine time it took to complete sequence           
+                seqduration(i,ii) = data(i,Loc3(ii)+(lenSeq-key3position)) - data(i,Loc3(ii)-(key3position - 1)); % if correct sequence, determine time it took to complete sequence           
             end % IF loop
         end % IF loop
         seq_results(1,1).SEQduration(index) = nanmean(seqduration(i,:)); % compute mean of seqduration within each Block (use NaN mean b/c NaN's will be present if errors were made)
@@ -145,11 +168,11 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 index = 1;                                                                 % used as counter in loop; used to count # of Blocks
-interval12 = NaN(noBlock,param.nbKeys/length(param.sequence));             % Preallocate; sets variable with dimensions # SEQ Blocks x THE NUMBER OF SEQUENCE REPETITIONS WITHIN A GIVEN Block (I.E., KEY PRESSES / NUMBER OF ELEMENTS IN THE SEQUENCE); interval12 = duration between 1st and 2nd elements in the seq
-interval23 = NaN(noBlock,param.nbKeys/length(param.sequence));             % interval23 = duration between 2nd and 3rd elements in the seq
-interval34 = NaN(noBlock,param.nbKeys/length(param.sequence));             % interval34 = duration between 3rd and 4th elements in the seq
-interval45 = NaN(noBlock,param.nbKeys/length(param.sequence));             % interval45 = duration between 4th and 5th elements in the seq
-interval51 = NaN(noBlock,param.nbKeys/length(param.sequence));             % interval51 = duration between 5th and 1st elements in the seq (from last element of sequence back to the first)
+interval12 = NaN(noBlock,param.nbKeys/lenSeq);             % Preallocate; sets variable with dimensions # SEQ Blocks x THE NUMBER OF SEQUENCE REPETITIONS WITHIN A GIVEN Block (I.E., KEY PRESSES / NUMBER OF ELEMENTS IN THE SEQUENCE); interval12 = duration between 1st and 2nd elements in the seq
+interval23 = NaN(noBlock,param.nbKeys/lenSeq);             % interval23 = duration between 2nd and 3rd elements in the seq
+interval34 = NaN(noBlock,param.nbKeys/lenSeq);             % interval34 = duration between 3rd and 4th elements in the seq
+interval45 = NaN(noBlock,param.nbKeys/lenSeq);             % interval45 = duration between 4th and 5th elements in the seq
+interval51 = NaN(noBlock,param.nbKeys/lenSeq);             % interval51 = duration between 5th and 1st elements in the seq (from last element of sequence back to the first)
                                                                            % Must allocate seqdurations with NaN; but this variable is dependent on CORRECT sequences; if errors are made, there are less seqduration within a given Block
 
 for i = 1:1:noBlock;                                                      
