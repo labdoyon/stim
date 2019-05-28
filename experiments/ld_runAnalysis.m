@@ -76,8 +76,6 @@ for nLine = 1:length(logoriginal) %#ok<USENS>
 end % FOR loop
 clear index; clear flag; clear nLine; clear counter;                        % tidy workspace
 
-noBlock
-
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% SECTION 3: COMPUTING DEPENENT VARIABLES BLOCK DURATION AND STANDARD %%%
@@ -175,7 +173,7 @@ interval45 = NaN(noBlock,param.nbKeys/lenSeq);             % interval45 = durati
 interval51 = NaN(noBlock,param.nbKeys/lenSeq);             % interval51 = duration between 5th and 1st elements in the seq (from last element of sequence back to the first)
                                                                            % Must allocate seqdurations with NaN; but this variable is dependent on CORRECT sequences; if errors are made, there are less seqduration within a given Block
 
-for i = 1:1:noBlock;                                                      
+for i = 1:1:noBlock                                                  
     counter = 1;
     counter2 = 2;
     for ii = 1:1:param.nbKeys
