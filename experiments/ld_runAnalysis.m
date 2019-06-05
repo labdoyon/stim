@@ -8,9 +8,7 @@ if nargin < 1
     i_Dir = '';
 end
 
-%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% SECTION 1: INPUT DATA FILE                                          
+%% SECTION 1: INPUT DATA FILE                                          
 
 [fname,path]=uigetfile([ i_Dir   '*.mat'], 'Choose a file to analyse');
 if fname == 0
@@ -141,7 +139,7 @@ for i = 1:1:noBlock                                                        % i i
     Loc3 = find(key(i,:) == 3);                                % Within each Block, find where button 3 was pressed
     for ii = 1:1:length(Loc3)                                      % for each time the three appears
         if Loc3(ii) <= param.nbKeys - (lenSeq - key3position) && (Loc3(ii) >= key3position) % Ensures that each time a 3 appears, there are enough subsequent key presses to verify if the correct sequence was executed (w/o this check, it is likely to receive error msg 'index exceeds matrix dimensions')
-            if key(i,Loc3(ii)+RangeToCheck) == param.sequence(key3position+RangeToCheck)
+            if key(i,Loc3(ii) + RangeToCheck) == param.sequence(key3position + RangeToCheck)
               % if key(i,Loc3(ii)-2) == param.sequence(find(param.sequence ==3)-2) && key(i,Loc3(ii)-1) == param.sequence(find(param.sequence ==3)-1) && key(i,Loc3(ii)+1) == param.sequence(find(param.sequence ==3)+1) && key(i,Loc3(ii)+2) == param.sequence(find(param.sequence ==3)+2);
               % above line checks to make sure the appropriate sequence was executed; only valid for 5-element sequences. 
                 seq_results(1,1).correct(index) = seq_results(1,1).correct(index) + 1; % if correct sequence, add value of 1 to the count of correct sequences
