@@ -20,8 +20,7 @@ function [returnCode] = ld_verification(param)
 % CREATION OF THE WINDOW
 window = createWindow(param);
 
-%image_hand = imread('C:\Lab\core_stim\stimuli\Hand.png');
-if param.LeftOrRightHand == 1 % SHOULD BE MODIFIED
+if param.LeftOrRightHand == 1
     image_hand = imread([param.rawDir 'stimuli' filesep 'Hand.png']); % Left Hand
 elseif param.LeftOrRightHand == 2
     image_hand = imread([param.rawDir 'stimuli' filesep 'Hand.png']); % Right Hand
@@ -117,10 +116,10 @@ Screen('CloseAll');
 
 % Save file.mat
 i_name = 1;
-output_file_name = [param.outputDir, param.sujet,'_',param.task,'_' , num2str(i_name) ,'.mat'];
+output_file_name = [param.outputDir, param.subject,'_',param.task,'_' , num2str(i_name) ,'.mat'];
 while exist(output_file_name,'file')
     i_name = i_name+1;
-    output_file_name = [param.outputDir, param.sujet,'_',param.task,'_' , num2str(i_name) ,'.mat'];
+    output_file_name = [param.outputDir, param.subject,'_',param.task,'_' , num2str(i_name) ,'.mat'];
 end
 save(output_file_name, 'logoriginal', 'param'); 
 

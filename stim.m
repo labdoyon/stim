@@ -76,6 +76,7 @@ end
 % add stimuli/ and experiments/ to the MATLAB path
 addpath(strcat(HOME,'stimuli'))
 addpath(strcat(HOME,'experiments'))
+addpath(strcat(HOME,'analysis'))
 
 % --- TO RUN ONLY ONE DESIGN --- %
 % --- should be removed if stim_ChooseDesign is used
@@ -122,7 +123,12 @@ param.numMonitor = get(handles.radiobuttonYesSecondMonitor, 'Value');
 param.flipMonitor = get(handles.radiobuttonYesFlipMonitor, 'Value');
 
 % Common parameters        
-param.sujet = get(handles.editSubject, 'String');
+param.subject = get(handles.editSubject, 'String');
+param.outputDir = strcat(param.outputDir,filesep,param.subject);
+if ~exist(param.outputDir, 'dir')
+    mkdir(param.outputDir) % create subject output dir
+end
+
 param.outputDir = get(handles.editOutputDir, 'String');
 param.fullscreen = get(handles.radiobuttonFullScreenYes, 'Value');
 
