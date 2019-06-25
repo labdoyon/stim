@@ -20,7 +20,7 @@ if nargin < 1
     if isempty(sujet)
         return;
     end
-    param.sujet = sujet{1};
+    param.subject = sujet{1};
 end
 
 param.title = 'stim';
