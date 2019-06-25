@@ -1,23 +1,21 @@
 # stim Task
 Stimulation program using MATLAB for MSL tasks (motor sequence learning)
 
-# Current developer and curator: thibault.vlieghe@mcgill.ca
-# First author: arnaud.bore@gmail.com
+Current developer and curator: thibault.vlieghe@mcgill.ca
+First author: arnaud.bore@gmail.com
 
 # 1) Install
 
 1/3 - Clone or download stim from github
 https://github.com/labdoyon/stim
-Don't move files around. Respect the file structure from the original repository
+Don't move files around. Respect the file structure of the github repository
 
 2/3 - Download and install Psychtoolbox
 http://psychtoolbox.org/download
-If using Windows/OSX you will have to download Gstreamer as well
 
 3/3 - Add stim.m experiments/ stimuli/ analysis/ to MATLAB path
 (Running stim.m will automatically add all required files to the path
 for the current MATLAB session)
-And that's it! You're all set up!
 
 # 2) Testing
 
