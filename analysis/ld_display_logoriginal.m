@@ -182,28 +182,14 @@ colormap = [[1 0 0] % red
     ];
 
 KeyPressesPlot = figure;
-% for i = 1:numberOfBlocks
-i = 15;
-%     subplot(numberOfBlocks,1,i)
+for i = 1:numberOfBlocks
+    subplot(numberOfBlocks,1,i)
     blockKeys = keys(keys_block == i);
     b = bar(blockKeys,'FaceColor','flat');
     for j = 1:4
         j_elements_positions = find(blockKeys==j); num_elements = length(j_elements_positions);
         b.CData(j_elements_positions,:) = repmat(colormap(j,:),num_elements,1);
     end
-    % b.CData
-    % bar subplot
-    % y = [1 2 3; 4 5 6];
-    % ax1 = subplot(2,1,1);
-    % bar(ax1,y)
-    % 
-    % ax2 = subplot(2,1,2); 
-    % bar(ax2,y,'stacked')
-% end
-
-
-% logoriginalFigure.Position(3) = logoriginalFigure.Position(3)*1.8; % to
-% resize the figure so it's 1.8 wider
-
-% subplot(1,2,1); plot(timeStamp,plot_options)
-% subplot(1,2,2); bar(key)
+    hold on
+    barh([5 10],'color','green')
+end
