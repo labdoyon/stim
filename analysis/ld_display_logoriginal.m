@@ -256,8 +256,8 @@ KeyPressesPlot = figure(2);
 if numberOfBlocks<10
     start = 1; stop = numberOfBlocks;
 else
-    warning("this file contains many blocks (>10)")
-    warning("All blocks should not be displayed at once for readability")
+    warning('this file contains many blocks (>10)')
+    warning('All blocks should not be displayed at once for readability')
     disp('Which range of blocks would you like to be displayed?')
     disp(['Blocks range from 1 to ',num2str(numberOfBlocks)])
     start = input('start: first block of the range (please enter a valid integer)\n');
