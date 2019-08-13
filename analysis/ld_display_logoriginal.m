@@ -1,12 +1,10 @@
-function [RawDataPlot, KeyPressesPlot, logoriginal_explicit] = ld_display_logoriginal(varargin)
+function [RawDataPlot, KeyPressesPlot, logoriginal_explicit] = ld_display_logoriginal(logoriginal,param)
 %This function plots the entries of logoriginal, output of stim motor task,
 %for review of the raw data. It also returns logoriginal_explicit, a
 %rearranged version of logoriginal much easier to review in a spreadhseet.
 %Addtionally, it proposes to visualize key presses throughout the task, as
-%well as correct and incorrect sequences (provided the sequence used during
-%the task is provided)
-% Usage: [RawDataPlot, KeyPressesPlot, logoriginal_explicit] = ld_display_logoriginal(logoriginal)
-%        [RawDataPlot, KeyPressesPlot, logoriginal_explicit] = ld_display_logoriginal(logoriginal, sequence)
+%well as correct and incorrect sequences
+% Usage: [RawDataPlot, KeyPressesPlot, logoriginal_explicit] = ld_display_logoriginal(logoriginal,param)
 %
 %   On the x-axis is the position of the event in logoriginal, its index.
 %   On the y axis is the time stamp of the event, the recorded time when it
@@ -22,10 +20,20 @@ function [RawDataPlot, KeyPressesPlot, logoriginal_explicit] = ld_display_logori
 %#ok<*AGROW>
 %#ok<*FNDSB>
 
-%% Define variables
-if nargin == 0; error('please enter logoriginal as an input'); end
-logoriginal = varargin{1};
-if nargin > 1; sequence = varargin{2}; end
+%% Check and assign variables
+% if nargin == 0; error('please enter logoriginal as an input'); end
+% if ~iscell(varargin{1}) || size(varargin{1},1)~=1
+%         error('First input should be logoriginal. logoriginal should be a 1*nbEntries cell')
+% end
+% logoriginal = varargin{1}; sequence_exist = false;
+% if nargin > 1; sequence = varargin{2}; sequence_exist = true; end
+if isfield(param,'sequence')
+    sequence = param.sequence; sequence_exist = true;
+elseif isfield(param,'seqA')
+    sequence = param.seqA; sequence_exist = true;
+else
+    sequence_exist = false;
+end
 
 %% logoriginal_explicit computation
 
@@ -76,11 +84,11 @@ for i = 1:length(logoriginal) % Read through logoriginal entries
     
     %%%% Regular entries
     if strcmp(logoriginal{i}{2}, 'rep') && valid_key == 1 % Key press during practice phase
-        % the actual key pressed on the keyboard
+        % record the actual key pressed on the keyboard
         keys(end+1) = str2double(logoriginal{i}{3});
-        % Key time stamp and index
+        % record key time stamp and index
         key_times(end+1) = timeStamp; keys_indexes(end+1) = i;
-        % the block the key belongs to
+        % record the block the key belongs to
         keys_block(end+1) = currentBlock;
         
     elseif strcmp(logoriginal{i}{2},'Rest') % Start of a rest phase
@@ -99,7 +107,7 @@ for i = 1:length(logoriginal) % Read through logoriginal entries
         % we enter a practice phase, keys recorded during this time are valid
         valid_key = 1;
     
-    elseif strcmp(logoriginal{i}{2},'START') % Start of the task
+    elseif strcmp(logoriginal{i}{2},'START') % Start of the task, happens once
         start = timeStamp;
         start_x = i;
         
@@ -108,7 +116,7 @@ for i = 1:length(logoriginal) % Read through logoriginal entries
         stop_x = i;
         
     %%%% Problem-indicating entries
-    elseif strcmp(logoriginal{i}{2},'STOP MANUALLY') % Task was interrupted
+    elseif strcmp(logoriginal{i}{2},'STOP MANUALLY') % Task was manually interrupted
         stopManually = timeStamp;
         stopManually_x = i;
         
@@ -129,11 +137,12 @@ end
 
 %% Logoriginal plot
 
-RawDataPlot = figure;
+RawDataPlot = figure(1);
 if exist('taskName','var'); title(taskName);end
 labels = {'keys','Resting period start','Practice block start'};
 
-% Plot key presses as blue dots . or blue line with circles markers
+% Plot key presses as blue dots . or blue line with circles markers o if
+% too few entries
 if length(keys_indexes)<20;plot_options='b-o';else;plot_options = 'b.';end
 plot(keys_indexes,key_times,plot_options)
 hold on
@@ -151,7 +160,7 @@ hold on
     
     % If crashes, plot as red x
     if exist('stopManually','var')
-        plot(stopManually_x,stopManually,'rx'); labels{end+1} = 'Manual stop: Tak interrupted';
+        plot(stopManually_x,stopManually,'rx'); labels{end+1} = 'Manual stop: Task interrupted';
     end
     if exist('crash','var')
         plot(crash_x,crash,'rx'); labels{end+1} = 'Task crashed';
@@ -168,28 +177,115 @@ legend(labels,'Location','NorthWest')
 xlabel('logoriginal index / entry number')
 ylabel('time (s)')
 
-%% Key Presses plot
-
 if currentBlock ~= length(practice_time)
-    warning('Two measures of the number of Block don''t match!')
+    warning('Two measures of the number of blocks don''t match!')
 end
 numberOfBlocks = currentBlock;
+
+%% Detection of valid and invalid sequences (provided sequence was provided)
+
+if sequence_exist
+    lenSeq = length(sequence);
+    % counting the number of good sequences
+    numberCorrectSequences = zeros(1,numberOfBlocks);
+
+    % find the position of 3 in the sequence
+    key3position = find(sequence == 3);
+
+    % Range of positions to be checked around the 3, no need to check the 3, it is checked already
+    RangeToCheck = 1-key3position:lenSeq-key3position ;
+    RangeToCheck(RangeToCheck==0)=[];
+    % keys_correct: 1 if the key belongs to a correctly executed sequence, 0 otherwise
+    keys_correct = zeros(size(keys));
+
+    for blockNumber = 1:numberOfBlocks
+        % subset of keys belonging to this particular block
+        keys_i = keys(keys_block==blockNumber);
+        % Positions of this subset of keys in the keys array
+        keys_i_position = find(keys_block==blockNumber,1,'first'); 
+        nbKeys = length(keys_i); % number of keys
+        Loc3 = find(keys_i == 3); % locations of 3s in this subset
+        for ii = 1:length(Loc3)
+            if Loc3(ii) <= nbKeys - (lenSeq - key3position) && (Loc3(ii) >= key3position)
+                if keys_i(Loc3(ii) + RangeToCheck) == sequence(key3position + RangeToCheck)
+                    numberCorrectSequences(blockNumber) = numberCorrectSequences(blockNumber) + 1;
+                    % mark keys identified as correct
+                    keys_correct(keys_i_position-1 + Loc3(ii) + [RangeToCheck 0]) = 1;
+                    % make certain keys already belonging to a correct
+                    % sequence are not used to validate another sequence
+                    keys_i(Loc3(ii) + RangeToCheck) = zeros(size(RangeToCheck));
+                end
+            end
+        end
+    end
+end
+%% Key Presses plot
 
 colormap = [[1 0 0] % red
             [0 0 1] % blue
             [1 1 0] % yellow
             [0 1 0] % green
-    ];
+        ];
 
-KeyPressesPlot = figure;
-for i = 1:numberOfBlocks
-    subplot(numberOfBlocks,1,i)
-    blockKeys = keys(keys_block == i);
-    b = bar(blockKeys,'FaceColor','flat');
+
+% We convert keys_correct to a format displayable by barh so keys belonging
+% to a correct sequence are below a green bar and others below a red bar
+correct_session(1,1) = keys_correct(1);
+% We will call "session" either a continuous uninterrupted set of correct
+% keys, or a continuous uninterrupted set of incorrect keys
+session_length(1,1) = 1; currentBlock = 1; index = 1;
+
+for i = 2:length(keys_correct)
+    if keys_block(i) == currentBlock % staying in the same Block
+        if keys_correct(i) == correct_session(currentBlock,index) % staying in the same session
+            session_length(currentBlock,index) = session_length(currentBlock,index) + 1;
+        else % new session
+            index = index + 1;
+            correct_session(currentBlock,index) = keys_correct(i);
+            session_length(currentBlock,index) = 1;
+        end
+    else % new block (which implies new session as well)
+        currentBlock = currentBlock + 1; index = 1;
+        correct_session(currentBlock,index) = keys_correct(i);
+        session_length(currentBlock,index) = 1;
+    end
+end
+
+KeyPressesPlot = figure(2);
+
+if numberOfBlocks<10
+    start = 1; stop = numberOfBlocks;
+else
+    warning("this file contains many blocks (>10)")
+    warning("All blocks should not be displayed at once for readability")
+    disp('Which range of blocks would you like to be displayed?')
+    disp(['Blocks range from 1 to ',num2str(numberOfBlocks)])
+    start = input('start: first block of the range (please enter a valid integer)\n');
+    stop = input('stop: last block of the range (please enter a valid integer)\n');
+end
+numToBeDisplayed = stop - start +1;
+
+for i = start:stop
+    figure(2); subplot(numToBeDisplayed,1,i-start+1)
+    keys_i = keys(keys_block == i);
+    nbKeys = length(keys_i);
+    b = bar(keys_i,'FaceColor','flat');
     for j = 1:4
-        j_elements_positions = find(blockKeys==j); num_elements = length(j_elements_positions);
+        j_elements_positions = find(keys_i==j); num_elements = length(j_elements_positions);
         b.CData(j_elements_positions,:) = repmat(colormap(j,:),num_elements,1);
     end
-    hold on
-    barh([5 10],'color','green')
+    if sequence_exist
+        temp = [.5 session_length(i,:)]; % we adjust the position of the plot with a dummy bar
+        hold on; b2 = barh([5 10],[temp; 1:length(temp)],...
+        'stacked','BarWidth',0.3,'FaceColor','flat'); hold off
+        % We suppress display of the dummy bar
+        b2(1).CData = [1 1 1]; b2(1).EdgeColor = [1 1 1];
+        for j = 2:length(b2)
+            if correct_session(i,j-1); b2(j).CData = [0 1 0];
+            else; b2(j).CData = [1 0 0]; end
+        end
+        temps_axis = axis; axis([.5 nbKeys+0.5 0 5])
+    end
+end
+
 end
