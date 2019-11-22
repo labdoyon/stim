@@ -17,10 +17,10 @@ end
 load(strcat(path,fname));
 
 if strfind(fname,'Condition_A')
-    param.sequence = param.seqA; %#ok<NODEF>
+    sequence = param.seqA; %#ok<NODEF>
     param.task = 'Task Sequence A';
 elseif strfind(fname,'Condition_B')
-    param.sequence = param.seqB; %#ok<NODEF>
+    sequence = param.seqB; %#ok<NODEF>
     param.task = 'Task Sequence B';
 elseif strfind(fname,'Condition_C')
     msgbox('Analysis for Condition_C have not been implemented yet')
@@ -30,8 +30,14 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% SECTION 2: EXTRACT DATA FROM 'LOGORIGINAL' STRUCTURE 
 
-data = NaN(param.nbBlocks, param.nbKeys);                                   % matrix of time values corresponding to key presses. Dimensions: TOTAL BlockS (all conditions) x KEY PRESSES PER Block
-key = NaN(param.nbBlocks, param.nbKeys);                                    % matrix identifying which key was pressed (i.e., 1-4). Dimensions: TOTAL BlockS (all conditions) x KEY PRESSES PER Block
+if isfield(param,'nbBlocks')
+    nbBlocks = param.nbBlocks;
+else
+    nbBlocks = param.sessionBlocksNumber(find(param.sessionNumber==param.sessions));
+end
+
+data = NaN(nbBlocks, param.nbKeys);                                   % matrix of time values corresponding to key presses. Dimensions: TOTAL BlockS (all conditions) x KEY PRESSES PER Block
+key = NaN(nbBlocks, param.nbKeys);                                    % matrix identifying which key was pressed (i.e., 1-4). Dimensions: TOTAL BlockS (all conditions) x KEY PRESSES PER Block
 flag = '';                                                                  % used to separate rest periods (no key presses) from practice/training periods
 noBlock = 1;                                                                % used as counter below; eventually will equal TOTAL BlockS (all conditions)
 index = 1;                                                                  % used as counter in loop
@@ -49,7 +55,7 @@ for nLine = 1:length(logoriginal) %#ok<USENS>
         else
             stimulus.stop(counter) = str2double(logoriginal{nLine}{1});
             counter = counter + 1;
-            if counter>param.nbBlocks;break;end % we have received the "stop"
+            if counter>nbBlocks;break;end % we have received the "stop"
             % signal corresponding to the last desired block. Following is
             % either willingly excluded blocks or an incomplete Block.
         end
@@ -60,10 +66,10 @@ for nLine = 1:length(logoriginal) %#ok<USENS>
         key(noBlock,index) = str2double(logoriginal{nLine}{3});
         index = index + 1;                                                  % counter
         if index > param.nbKeys
-            if noBlock < param.nbBlocks                 % if counter = number of key presses within each Block
+            if noBlock < nbBlocks                 % if counter = number of key presses within each Block
                 index = 1;                                                      % reset counter
                 noBlock = noBlock + 1;
-            % else % noBlock >= param.nbBlocks
+            % else % noBlock >= nbBlocks
                 % this means we have gathered all the data, if we find
                 % more, this will be the last blocks that have not been
                 % included, either deliberately, or the last block that is
@@ -119,13 +125,18 @@ clear index; clear i; clear interval; clear nKey;  % tidy workspace
 
 index = 1;
 % used as counter in loop; used to count # of Blocks within a condition (SEQ or SEQ)
-lenSeq = length(param.sequence);
+if isfield(param,{'seq'}) && strcmp(param.seq,'seqB')
+    sequence = param.seqB;
+else
+    sequence = param.seqA; % sequence A is used by default
+end
+lenSeq = length(sequence);
 
 seqduration = NaN(noBlock,(param.nbKeys/lenSeq));            % Preallocate; sets variable with dimensions TOTAL Block # x THE NUMBER OF SEQUENCE REPETITIONS WITHIN A GIVEN Block (I.E., KEY PRESSES / NUMBER OF ELEMENTS IN THE SEQUENCE)
                                                                            % Must allocate seqdurations with NaN; but this variable is dependent on CORRECT sequences; if errors are made, there are less seqduration within a given Block
 seq_results(1,1).correct = zeros(1,noBlock);                             % Initialize; start with zero correct sequences; will sum in the code below
 
-key3position = find(param.sequence == 3);
+key3position = find(sequence == 3);
 % Within the SEQ to be learned, find location of the element 3. 
 % The selection of 3 is arbitrary but ASSUMES that element 3 only appears
 % once in the sequence
@@ -139,8 +150,8 @@ for i = 1:1:noBlock                                                        % i i
     Loc3 = find(key(i,:) == 3);                                % Within each Block, find where button 3 was pressed
     for ii = 1:1:length(Loc3)                                      % for each time the three appears
         if Loc3(ii) <= param.nbKeys - (lenSeq - key3position) && (Loc3(ii) >= key3position) % Ensures that each time a 3 appears, there are enough subsequent key presses to verify if the correct sequence was executed (w/o this check, it is likely to receive error msg 'index exceeds matrix dimensions')
-            if key(i,Loc3(ii) + RangeToCheck) == param.sequence(key3position + RangeToCheck)
-              % if key(i,Loc3(ii)-2) == param.sequence(find(param.sequence ==3)-2) && key(i,Loc3(ii)-1) == param.sequence(find(param.sequence ==3)-1) && key(i,Loc3(ii)+1) == param.sequence(find(param.sequence ==3)+1) && key(i,Loc3(ii)+2) == param.sequence(find(param.sequence ==3)+2);
+            if key(i,Loc3(ii) + RangeToCheck) == sequence(key3position + RangeToCheck)
+              % if key(i,Loc3(ii)-2) == sequence(find(sequence ==3)-2) && key(i,Loc3(ii)-1) == sequence(find(sequence ==3)-1) && key(i,Loc3(ii)+1) == sequence(find(sequence ==3)+1) && key(i,Loc3(ii)+2) == sequence(find(sequence ==3)+2);
               % above line checks to make sure the appropriate sequence was executed; only valid for 5-element sequences. 
                 seq_results(1,1).correct(index) = seq_results(1,1).correct(index) + 1; % if correct sequence, add value of 1 to the count of correct sequences
                 seqduration(i,ii) = data(i,Loc3(ii)+(lenSeq-key3position)) - data(i,Loc3(ii)-(key3position - 1)); % if correct sequence, determine time it took to complete sequence           
@@ -176,12 +187,12 @@ for i = 1:1:noBlock
     counter2 = 2;
     for ii = 1:1:param.nbKeys
         if ii+4 <= param.nbKeys % prevents error msg of exceeding matrix dimensions
-            if key(i,ii) == param.sequence(1) && key(i,ii+1) == param.sequence(2) && key(i,ii+2) == param.sequence(3) && key(i,ii+3) == param.sequence(4) && key(i,ii+4) == param.sequence(5)
+            if key(i,ii) == sequence(1) && key(i,ii+1) == sequence(2) && key(i,ii+2) == sequence(3) && key(i,ii+3) == sequence(4) && key(i,ii+4) == sequence(5)
                 interval12(index,counter) = data(i,ii+1) - data(i,ii);
                 interval23(index,counter) = data(i,ii+2) - data(i,ii+1);
                 interval34(index,counter) = data(i,ii+3) - data(i,ii+2); 
                 interval45(index,counter) = data(i,ii+4) - data(i,ii+3); 
-                if ii+5 <= param.nbKeys && key(i,ii+5) == param.sequence(1) % prevents error msg of exceeding matrix dimensions AND it makes sure that the first element of the sequence is pressed after the last elementof the preceeding sequence
+                if ii+5 <= param.nbKeys && key(i,ii+5) == sequence(1) % prevents error msg of exceeding matrix dimensions AND it makes sure that the first element of the sequence is pressed after the last elementof the preceeding sequence
                     interval51(index,counter2) = data(i,ii+5) - data(i,ii+4); 
                     counter2 = counter2 + 1; 
                 end
@@ -253,6 +264,44 @@ ylabel('Interkeys interval','FontName','Arial','FontSize',12);
 ylim([0 (max([seq_results.Interval12, seq_results.Interval23, ...
               seq_results.Interval34, seq_results.Interval45, ...
               seq_results.Interval51]))])
+
+%% Save sheet output
+blocks = 1:1:length(seq_results.GOduration);
+block_duration = seq_results.GOduration;
+correct_seq_duration = seq_results.SEQduration;
+correct_seq_std = seq_results.SEQstandard;
+number_correct_sequences = seq_results.correct;
+Interval12 = seq_results.Interval12;
+Interval23 = seq_results.Interval23;
+Interval34 = seq_results.Interval34;
+Interval45 = seq_results.Interval45;
+Interval51 = seq_results.Interval51;
+
+matrix  = [blocks;
+    block_duration;
+    correct_seq_duration;
+    correct_seq_std;
+    number_correct_sequences;
+    Interval12;
+    Interval23;
+    Interval34;
+    Interval45;
+    Interval51];
+table = num2cell(matrix);
+titles = {'blocks';
+    'block_duration';
+    'correct_seq_duration';
+    'correct_seq_std';
+    'number_correct_sequences';
+    'Interval12';
+    'Interval23';
+    'Interval34';
+    'Interval45';
+    'Interval51'};
+table = num2cell(matrix);
+table = [titles table];
+file = strcat(param.sujet,'_session_',num2str(param.sessionNumber),'_','.csv');
+writecell(table,file);
 
 %% Save figure: .fig and .png
 saveas(gcf,[param.outputDir fname(1:end-3) 'fig']);
