@@ -168,17 +168,38 @@ function button_CondB_Callback(hObject, eventdata, handles)
 global D_EXPERIMENT;
 D_EXPERIMENT = 'Condition_B';
 Start_experiment(D_EXPERIMENT,handles)
-        
-% --- Executes on button press in buttonResults
-function button_CondC_Callback(hObject, eventdata, handles)
+
+function button_associate_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-global D_EXPERIMENT;
-D_EXPERIMENT = 'Condition_C';
-Start_experiment(D_EXPERIMENT,handles)
-        
+param = getappdata(0,'param');
+
+param.subject = get(handles.editSubject, 'String');
+param.outputDir = get(handles.editOutputDir, 'String');
+param.outputDir = strcat(param.outputDir,filesep,param.subject);
+if ~exist(param.outputDir, 'dir')
+    mkdir(param.outputDir) % create subject output dir
+end
+hand_possibilities = 1:length(param.hands);
+sound_possibilities = 1:length(param.sounds);
+hand_choice = randi(hand_possibilities);
+sound_choice = randi(sound_possibilities);
+
+param.HandSoundSequenceAssociation.seqA.hand = param.hands(hand_choice);
+hand_possibilities(hand_possibilities==hand_choice) = [];
+param.HandSoundSequenceAssociation.seqB.hand = param.hands(hand_possibilities(1));
+
+param.HandSoundSequenceAssociation.seqA.sound = param.sounds(sound_choice);
+sound_possibilities(sound_possibilities==sound_choice) = [];
+param.HandSoundSequenceAssociation.seqB.sound = param.sounds(sound_possibilities(1));
+
+param.task = 'HandSoundSequenceAssociation';
+
+savefile(param);
+
+
 % --- Executes on button press in buttonResults
 function buttonResults_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
@@ -205,7 +226,6 @@ function setExperimentButton(handles)
 % Buttons and panel properties
 set(handles.button_CondA, 'FontWeight', 'normal');
 set(handles.button_CondB, 'FontWeight', 'normal');
-set(handles.button_CondC, 'FontWeight', 'normal');
 set(handles.uipanel_stim_Project, 'Visible', 'off');
 
 % Get param from application data collection

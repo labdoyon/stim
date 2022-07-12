@@ -9,7 +9,7 @@ param = struct(...
     'rawDir',           HOME, ... 
     'outputDir',        [HOME, 'output', filesep], ...      % output directory to save data (onset and .mat)
     'LeftOrRightHand',  1,...                   % 1 = Left Hand, 2 = Right Hand
-    'SeqA',             [2 4 1 3 4 2 3 1], ...        % sequence A to execute
+    'seqA',             [2 4 1 3 4 2 3 1], ...        % sequence A to execute
     'seqB',             [2 1 4 3 2 3 4 1], ...        % sequence B to execute
     'nbBlocks',         2, ...                  % number of blocs during task
     'nbBlocksDayOne',   10, ...                 % number of blocs during task
@@ -25,6 +25,9 @@ param = struct(...
 );
 
 param.keyboard = KbName('KeyNames');
+
+param.hands = {'left_hand'; 'right_hand'};
+param.sounds = {'sound1'; 'sound2'};
 
 if strfind(currentOS,'microsoft')
     LoadPsychHID
