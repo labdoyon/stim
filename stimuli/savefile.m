@@ -9,18 +9,13 @@ while exist(output_file_name,'file')
     i_name = i_name+1;
     output_file_name = [param.outputDir, param.subject,'_',param.task,'_' , num2str(i_name) ,'.mat'];
 end
-if exist('logoriginal', 'var') && exist('seq_info', 'var') && ...
-    exist('seq_matrx', 'var')
-    save(output_file_name, 'logoriginal', 'param','seq_info','seq_matrx');
-    % Write onset
-    f_onset = fopen([param.outputDir, param.subject, '_' , param.task ,'_onset.txt'], 'a');
-    fprintf(f_onset, '\n\n%s   %d-%d-%d %d:%d:%d\n', '%%% tache appr/vitesse %%%',param.time(1),param.time(2),param.time(3),param.time(4),param.time(5),param.time(6));
-    fprintf(f_onset, 'rest = [%s];\n', num2str(onset.rest,'%8.2f'));
-    fprintf(f_onset, 'seq = [%s];\n', num2str(onset.seq,'%8.2f'));
-    fprintf(f_onset, 'seqDur = [%s];\n', num2str(onset.seqDur,'%7.2f'));
-    fclose(f_onset);
-else
-    d = datetime(now,'ConvertFrom','datenum');
-    param.time = d;
-    save(output_file_name, 'param');
-end
+
+save(output_file_name, 'logoriginal', 'param','seq_info','seq_matrx');
+% Write onset
+f_onset = fopen([param.outputDir, param.subject, '_' , param.task ,'_onset.txt'], 'a');
+fprintf(f_onset, '\n\n%s   %d-%d-%d %d:%d:%d\n', '%%% tache appr/vitesse %%%',param.time(1),param.time(2),param.time(3),param.time(4),param.time(5),param.time(6));
+fprintf(f_onset, 'rest = [%s];\n', num2str(onset.rest,'%8.2f'));
+fprintf(f_onset, 'seq = [%s];\n', num2str(onset.seq,'%8.2f'));
+fprintf(f_onset, 'seqDur = [%s];\n', num2str(onset.seqDur,'%7.2f'));
+fclose(f_onset);
+
