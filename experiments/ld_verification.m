@@ -20,10 +20,10 @@ function [returnCode] = ld_verification(param)
 % CREATION OF THE WINDOW
 window = createWindow(param);
 
-if param.LeftOrRightHand == 1
-    image_hand = imread([param.rawDir 'stimuli' filesep 'Hand.png']); % Left Hand
-elseif param.LeftOrRightHand == 2
-    image_hand = imread([param.rawDir 'stimuli' filesep 'Hand.png']); % Right Hand
+if strcmp(param.LeftOrRightHand, 'left_hand')
+    image_hand = imread([param.rawDir 'stimuli' filesep 'left-hand_with-numbers.png']); % Left Hand
+elseif strcmp(param.LeftOrRightHand, 'right_hand')
+    image_hand = imread([param.rawDir 'stimuli' filesep 'right-hand_with-numbers.png']); % Right Hand
 end
 texture_hand = Screen('MakeTexture', window, image_hand);
 
