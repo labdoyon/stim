@@ -129,6 +129,17 @@ if ~exist(param.outputDir, 'dir')
     mkdir(param.outputDir) % create subject output dir
 end
 
+load([param.outputDir, param.subject,'_','HandSoundSequenceAssociation',...
+    '_' , num2str(1) ,'.mat'], 'HandSoundSequenceAssociation')
+
+param.HandSoundSequenceAssociation = HandSoundSequenceAssociation;
+
+if strcmp(D_EXPERIMENT, 'Condition_A')
+    param.LeftOrRightHand = param.HandSoundSequenceAssociation.seqA.hand;
+elseif strcmp(D_EXPERIMENT, 'Condition_B')
+    param.LeftOrRightHand = param.HandSoundSequenceAssociation.seqB.hand;
+end
+
 param.outputDir = get(handles.editOutputDir, 'String');
 param.fullscreen = get(handles.radiobuttonFullScreenYes, 'Value');
 
@@ -146,7 +157,7 @@ param.durRest = str2double(get(handles.editdurRest, 'String'));
 % Intro
 param.IntroNbSeq = str2double(get(handles.editIntroNbSeq, 'String'));
 
-ld_menuExperiment(param)
+ld_menuCond(param)
 
 
 % --- Executes on button press in buttonResults
@@ -187,17 +198,17 @@ sound_possibilities = 1:length(param.sounds);
 hand_choice = randi(hand_possibilities);
 sound_choice = randi(sound_possibilities);
 
-param.HandSoundSequenceAssociation.seqA.hand = param.hands(hand_choice);
+HandSoundSequenceAssociation.seqA.hand = param.hands{hand_choice};
 hand_possibilities(hand_possibilities==hand_choice) = [];
-param.HandSoundSequenceAssociation.seqB.hand = param.hands(hand_possibilities(1));
+HandSoundSequenceAssociation.seqB.hand = param.hands{hand_possibilities(1)};
 
-param.HandSoundSequenceAssociation.seqA.sound = param.sounds(sound_choice);
+HandSoundSequenceAssociation.seqA.sound = param.sounds{sound_choice};
 sound_possibilities(sound_possibilities==sound_choice) = [];
-param.HandSoundSequenceAssociation.seqB.sound = param.sounds(sound_possibilities(1));
+HandSoundSequenceAssociation.seqB.sound = param.sounds{sound_possibilities(1)};
 
 param.task = 'HandSoundSequenceAssociation';
 
-savefile(param);
+savefile_HandSoundSequenceAssociation(param, HandSoundSequenceAssociation);
 
 
 % --- Executes on button press in buttonResults
