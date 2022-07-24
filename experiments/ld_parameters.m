@@ -29,6 +29,26 @@ param.keyboard = KbName('KeyNames');
 param.hands = {'left_hand'; 'right_hand'};
 param.sounds = {'sound1'; 'sound2'};
 
+% For both hands, a sequence is performed with 1 being the Index Finger,
+% 2 being the Middle Finger, 3 being the ring finger and 4 being the 
+% little finger
+% performing sequence 2 4 1 3, for example, would mean pressing
+% middle finger, little finger, Index Finger and ring finger, in that order
+
+% Assuming a usual keyboard, this would mean that key 1 on the keyboard is 
+% the little finger, so 4 in terms of element of the sequence. Key 2 is the
+% ring finger, so 3 as an element of the sequence, and so onF.
+keySet = {1, 2, 3, 4};
+valueSet = {4, 3, 2, 1};
+left_hand_keyboard_key_to_task_element = containers.Map(keySet,valueSet);
+%
+keySet = {7, 8, 9, 0};
+valueSet = {1, 2, 3, 4};
+right_hand_keyboard_key_to_task_element = containers.Map(keySet,valueSet);
+
+param.left_hand_keyboard_key_to_task_element = left_hand_keyboard_key_to_task_element;
+param.right_hand_keyboard_key_to_task_element = right_hand_keyboard_key_to_task_element;
+
 if strfind(currentOS,'microsoft')
     LoadPsychHID
     empties = cellfun('isempty',param.keyboard);

@@ -22,31 +22,26 @@ window = createWindow(param);
 
 if strcmp(param.LeftOrRightHand, 'left_hand')
     image_hand = imread([param.rawDir 'stimuli' filesep 'left-hand_with-numbers.png']); % Left Hand
+    param.keyboard_key_to_task_element = param.left_hand_keyboard_key_to_task_element;
 elseif strcmp(param.LeftOrRightHand, 'right_hand')
     image_hand = imread([param.rawDir 'stimuli' filesep 'right-hand_with-numbers.png']); % Right Hand
+    param.keyboard_key_to_task_element = param.right_hand_keyboard_key_to_task_element;
 end
 texture_hand = Screen('MakeTexture', window, image_hand);
 
 success = 0;
 
-if param.language == 1 % if French
-    message = {
-                '1 = Auriclaire',...
-                '2 = Annulaire',...                
-                '3 = Majeur',...
-                '4 = Index'
-              };
-elseif param.language == 2 % if English
-    message = {
-                '1 = Little finger',...
-                '2 = Ring finger',...
-                '3 = Middle finger',...
-                '4 = Index finger'
-                };
-else
-    error(strcat('No information is available for the language >>> ', ...
-                        param.task, ' >>> CHECK!!!'));          
-end
+message = {
+            '1 = Index finger',...
+            '2 = Middle finger',...
+            '3 = Ring finger',...
+            '4 = Little finger'
+            };
+keySet = {1, 2, 3, 4};
+valueSet = {'Index finger', 'Middle finger', ...
+    'Ring finger', 'Little finger'};
+finger_name = containers.Map(keySet,valueSet);
+
 
 logoriginal = [];
 
@@ -66,11 +61,7 @@ Screen('TextSize',window, 30);
 verif = [1,2,3,4];        
 Screen('DrawTexture',window,texture_hand,[],[20 20 size(image_hand,2) size(image_hand,1)]);
 
-if param.language == 1 % French
-    DrawFormattedText(window,'... Êtes-vous prêt à continuer? ...','center',620,gold);
-else % English
-    DrawFormattedText(window,'... Are you ready to start? ...','center',620,gold);
-end
+DrawFormattedText(window,'... Are you ready to start? ...','center',620,gold);
 
 Screen('Flip', window);
 pause(0.1);
@@ -89,18 +80,28 @@ end
 % Test all the buttons
 logoriginal{length(logoriginal)+1}{1} = num2str(GetSecs - timeStartExperience);
 logoriginal{length(logoriginal)}{2} = param.task;
-    
+
 for nButton = 1:4
     while success == 0
-        if param.language == 1 % French
-            [quit, key, time] = displayMessage(param.keyboard, window, ['Pressez ' num2str(verif(nButton))],0,1,0,'gold',40);
-        else % English
-            [quit, key, time] = displayMessage(param.keyboard, window, ['Press ' num2str(verif(nButton))],0,1,0,'gold',40);
-        end
+        [quit, key, time] = displayMessage(param.keyboard, window, ...
+            ['Press ' num2str(verif(nButton))],0,1,0,'gold',40);
         if quit break; end %#ok<SEPEX>
         
         strDecoded = ld_convertKeyCode(key, param.keyboard);
         key = ld_convertOneKey(strDecoded);
+
+        try
+            key = param.keyboard_key_to_task_element(key);
+        catch ME
+            switch ME.identifier
+                case 'MATLAB:Containers:Map:NoKey'
+                    key = 0;
+                otherwise
+                    ME.identifier
+                    rethrow(ME)
+            end
+        end
+        %
 
         if key == nButton
             success = 1;
