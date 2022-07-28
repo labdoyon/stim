@@ -1,4 +1,8 @@
-function [keys] = ld_convertMultipleKeys(keys, currentKeyboard)
+function [keys_as_sequence_element, ...
+    keys_source_keyboard_value] = ...
+    ld_convertMultipleKeys(keys_source_keyboard_value, ...
+    currentKeyboard, ...
+    keyboard_key_to_task_element)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Map keys code according to the task mapping
 % MRI compatible keyboard 
@@ -9,7 +13,12 @@ function [keys] = ld_convertMultipleKeys(keys, currentKeyboard)
 %
 %
 
-for nbKeys = 1:length(keys)
-    strDecoded = ld_convertKeyCode(keys(nbKeys), currentKeyboard);
-    keys(nbKeys) = ld_convertOneKey(strDecoded);
+for nbKeys = 1:length(keys_source_keyboard_value)
+    strDecoded = ld_convertKeyCode(keys_source_keyboard_value(nbKeys), currentKeyboard);
+    keys_source_keyboard_value(nbKeys) = ld_convertOneKey(strDecoded);
+end
+
+keys_as_sequence_element = keys_source_keyboard_value;
+for nbKeys = 1:length(keys_as_sequence_element)
+    keys_as_sequence_element(nbKeys) = keyboard_key_to_task_element(keys_source_keyboard_value);
 end
