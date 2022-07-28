@@ -161,23 +161,13 @@ ld_menuCond(param)
 
 
 % --- Executes on button press in buttonResults
-function button_CondA_Callback(hObject, eventdata, handles)
+function button_start_experiment_Callback(hObject, eventdata, handles)
 % hObject    handle to buttonStart (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
 global D_EXPERIMENT;
 D_EXPERIMENT = 'Condition_A';
-Start_experiment(D_EXPERIMENT,handles)
-
-% --- Executes on button press in buttonResults
-function button_CondB_Callback(hObject, eventdata, handles)
-% hObject    handle to buttonStart (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-global D_EXPERIMENT;
-D_EXPERIMENT = 'Condition_B';
 Start_experiment(D_EXPERIMENT,handles)
 
 function button_associate_Callback(hObject, eventdata, handles)
@@ -235,8 +225,7 @@ close;
 function setExperimentButton(handles)
 
 % Buttons and panel properties
-set(handles.button_CondA, 'FontWeight', 'normal');
-set(handles.button_CondB, 'FontWeight', 'normal');
+set(handles.button_start_experiment_Callback, 'FontWeight', 'normal');
 set(handles.uipanel_stim_Project, 'Visible', 'off');
 
 % Get param from application data collection
