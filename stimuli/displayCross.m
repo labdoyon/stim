@@ -1,4 +1,14 @@
-function [quit, keysPressed, timePressed] = displayCross(currentKeyboard, window, duration, nbKeys, frequency, color, size, wait_max)
+function [quit, keysPressed, timePressed] = displayCross(...
+    currentKeyboard, ...
+    window, ...
+    duration, ...
+    nbKeys, ...
+    frequency, ...
+    color, ...
+    size, ...
+    wait_max, ...
+    display_sequence_above_cross, ...
+    sequence)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % [quit, keysPressed, timePressed] = en_stimCross(duration, nbKeys, color,
 % size, frequence, responseBox, timeOffset)
@@ -22,6 +32,7 @@ function [quit, keysPressed, timePressed] = displayCross(currentKeyboard, window
 
 % Init
 % if nargin < 7 timeOffset = 0; end
+if nargin < 9; display_sequence_above_cross = false; sequence=[]; end
 if nargin < 8; wait_max = 3600; end
 if nargin < 7; size = 100; end
 if nargin < 6; color = 'white'; end
@@ -33,6 +44,7 @@ if duration == 0; duration = 3600; end
 quit = 0;
 keysPressed = [];
 timePressed = [];
+gold = [255, 215, 0, 255];
 
 
 switch color
@@ -52,7 +64,11 @@ end
 if (frequency == 0)
     % Display cross    
     Screen('TextFont', window, 'Arial');
-    Screen('TextSize', window, size );
+    Screen('TextSize', window, 40 );  # TODO: put into experiments/ld_parameters.m
+    if display_sequence_above_cross
+        DrawFormattedText(window, num2str(sequence), 'center',100, gold);
+    end
+    Screen('TextSize', window, size);
     DrawFormattedText(window, '+', 'center', 'center', color);
     Screen('Flip', window);
     % Read Keyboard

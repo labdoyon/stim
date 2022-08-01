@@ -86,11 +86,11 @@ for i = 1:numel(learning_sequence_a_or_b)
     DrawFormattedText(window,'AND WITHOUT ANY ERRORS:','center',200,gold);
     DrawFormattedText(window,num2str(l_seqUsed),'center',300,gold);
     Screen('Flip', window);
-    pause(8)
+    pause(5)  # TODO: put durations into experiments/ld_param.m
     
     % display red cross for 1 second
     [quit, ~, ~] = displayCross(param.keyboard, window, param.shortRest, ...
-                                        0, 0, 'red', 100);
+                                        0, 0, 'red', 100, param.shortRest, true, l_seqUsed);
 
     % subject must type sequence once correctly
     if ~quit
@@ -105,14 +105,14 @@ for i = 1:numel(learning_sequence_a_or_b)
             index = 0;
             keyTmp = [];
             while seqOK == 0
-                [quit, key, timePressed] = displayCross(param.keyboard, window,0,1,0,'green',100);
+                [quit, key, timePressed] = displayCross(param.keyboard, window,0,1,0,'green',100, 100, true, l_seqUsed);
                 if quit 
                     break; 
                 end
-                
+
                 strDecoded = ld_convertKeyCode(key, param.keyboard);
                 key = ld_convertOneKey(strDecoded);
-                
+
                 try
                     key = param.keyboard_key_to_task_element(key);
                 catch ME
