@@ -64,7 +64,7 @@ end
 if (frequency == 0)
     % Display cross    
     Screen('TextFont', window, 'Arial');
-    Screen('TextSize', window, 40 );  # TODO: put into experiments/ld_parameters.m
+    Screen('TextSize', window, 40 );  % TODO: put into experiments/ld_parameters.m
     if display_sequence_above_cross
         DrawFormattedText(window, num2str(sequence), 'center',100, gold);
     end
