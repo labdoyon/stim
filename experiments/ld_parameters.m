@@ -28,7 +28,7 @@ param = struct(...
 param.keyboard = KbName('KeyNames');
 
 param.hands = {'left_hand'; 'right_hand'};
-param.sounds = {'sound1'; 'sound2'};
+param.sounds = {'shortest-1-100ms.wav', 'shortest-3-100ms.wav'};
 
 % For both hands, a sequence is performed with 1 being the Index Finger,
 % 2 being the Middle Finger, 3 being the ring finger and 4 being the 
