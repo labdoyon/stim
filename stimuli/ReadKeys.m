@@ -41,8 +41,7 @@ timePressed = [];
 
         if ~isempty(find(KeysPressed))
             strDecoded = ld_convertKeyCode(keyCode, currentKeyboard);
-
-            if ~isempty(strfind(strDecoded, 'ESC')) && ~isempty(strfind(strDecoded, 'esc')) && ~isempty(strfind(strDecoded, 'Escape')) % ESC6
+            if contains(strDecoded, 'ESC') || contains(strDecoded, 'esc') || contains(strDecoded, 'Escape') % ESC6
                 quit=1;
             elseif ~isempty(strfind(strDecoded, '5')) && ~accept_ttl
                  % Do not record (TTL)
