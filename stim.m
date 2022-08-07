@@ -134,12 +134,6 @@ load([param.outputDir, param.subject,'_','HandSoundSequenceAssociation',...
 
 param.HandSoundSequenceAssociation = HandSoundSequenceAssociation;
 
-if strcmp(D_EXPERIMENT, 'Condition_A')
-    param.LeftOrRightHand = param.HandSoundSequenceAssociation.seqA.hand;
-elseif strcmp(D_EXPERIMENT, 'Condition_B')
-    param.LeftOrRightHand = param.HandSoundSequenceAssociation.seqB.hand;
-end
-
 param.outputDir = get(handles.editOutputDir, 'String');
 param.fullscreen = get(handles.radiobuttonFullScreenYes, 'Value');
 
@@ -167,7 +161,8 @@ function button_start_experiment_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 global D_EXPERIMENT;
-D_EXPERIMENT = 'Condition_A';
+% D_EXPERIMENT = 'Condition_A';
+D_EXPERIMENT = '';
 Start_experiment(D_EXPERIMENT,handles)
 
 function button_associate_Callback(hObject, eventdata, handles)
