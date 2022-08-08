@@ -139,62 +139,34 @@ for i = 1:numel(learning_sequence_a_or_b)
         break;
     end
 
-    % subject must type sequence once correctly
     if ~quit
         % Testing number of good sequences entered
         logoriginal{length(logoriginal)+1}{1} = num2str(GetSecs - timeStartExperience);
         logoriginal{length(logoriginal)}{2} = param.task;
-        NbSeqOK = 0;
-        while (NbSeqOK < param.IntroNbSeq)
     
-            % Sequence
-            seqOK = 0;
-            index = 0;
-            keyTmp = [];
-            while seqOK == 0
-                [quit, key, timePressed] = displayCross(param.keyboard, window,0,1,0,'green',100, 100, true, l_seqUsed);
-                disp(quit)
-                if quit 
-                    break; 
-                end
+        [quit, keysPressed, timePressed] = displayCross(...
+            param.keyboard, window,...
+            0,param.IntroNbSeq*length(l_seqUsed),...
+            0,'green',100, 100, true, l_seqUsed);
 
-                strDecoded = ld_convertKeyCode(key, param.keyboard);
-                key = ld_convertOneKey(strDecoded);
+        [keys_as_sequence_element,  keys_source_keyboard_value] = ...
+            ld_convertMultipleKeys(keysPressed, param.keyboard, ...
+            param.keyboard_key_to_task_element);
 
-                try
-                    key = param.keyboard_key_to_task_element(key);
-                catch ME
-                    switch ME.identifier
-                        case 'MATLAB:Containers:Map:NoKey'
-                            key = 0;
-                        otherwise
-                            ME.identifier
-                            rethrow(ME)
-                    end
-                end
+        % Find Good sequences
+        str_keys = num2str(keys_as_sequence_element);
+        str_l_seqUsed = num2str(l_seqUsed);
 
-                disp(key)
-                
-                logoriginal{end+1}{1} = num2str(timePressed - timeStartExperience);
-                logoriginal{end}{2} = 'rep';
-                logoriginal{end}{3} = num2str(key);
-    
-                index = index + 1;
-                keyTmp(index) = key;
-                if index >= length(l_seqUsed)
-                    if keyTmp == l_seqUsed
-                        seqOK = 1;
-                        NbSeqOK = NbSeqOK + 1;
-                    else
-                        keyTmp(1) = [];
-                        index = index - 1;
-                        NbSeqOK = 0;
-                    end
-                end
-            end % End while loop: check if sequence is ok 
-            if quit 
-                break; 
-            end
+        % Display good sequences and total time
+        disp([num2str(size(strfind(str_keys,str_l_seqUsed),2)) ' good sequences']);
+        disp(num2str(round(10*onset.seqDur)/10));
+
+        % Record Keys
+        for nbKeys = 1:length(keys_as_sequence_element)
+            logoriginal{end+1}{1} = num2str(timePressed(nbKeys) - timeStartExperience );
+            logoriginal{end}{2} = 'rep';
+            logoriginal{end}{3} = num2str(keys_as_sequence_element(nbKeys));
+            logoriginal{end}{4} = num2str(keys_source_keyboard_value(nbKeys));
         end
     else
         break
