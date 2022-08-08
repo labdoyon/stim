@@ -15,26 +15,31 @@ global D_EXPERIMENT;
     while nextMenu
         choice = menu(...
                        strcat('Menu - ', D_EXPERIMENT),...
-                       'Rest', ...  
-                       'Verification',...
-                       'Intro',...
+                       'Step 1: Adjust sounds volumes',...
+                       'Step 2: Checking keyboard',...
+                       'Step 3: Sequence Familiarization', ...
+                       'Step 4: Association of the sequences and sound',...
                        'Task',...
                        'Quit'...
                        );
         sessionName = D_EXPERIMENT;
         switch choice
             case 1
-                ld_rest(param);
-            case 2           
+                param.task = ['Step-1_sound-volume-adjustment', sessionName];
+                ld_adjustVolume(param);
+            case 2
                 param.task = ['Verification - ', sessionName];
-                ld_verification(param);        
+                ld_verification(param);
             case 3
-                param.task = ['Intro - ', sessionName];
+                param.task = ['Phase 1 - ', sessionName];
                 ld_intro(param);
             case 4
+                param.task = ['Phase 2 - ', sessionName];
+                ld_sound_sequence_association(param);
+            case 5
                 param.task = ['Task - ', sessionName];
                 ld_task(param);
-            case 5
+            case 6
                 break;
         end
     end
