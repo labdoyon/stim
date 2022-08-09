@@ -110,71 +110,88 @@ for i = 1:numel(learning_sequence_a_or_b)
         param.keyboard_key_to_task_element = param.right_hand_keyboard_key_to_task_element;
     end
     
-    
-    % display white cross for 200ms
-    [quit, ~, ~] = displayCross(param.keyboard, window, 0.2, ...
-                                        0, 0, 'white', 100, 0.2, false,...
-                                        []);
-    if quit
-        Screen('CloseAll')
-        break;
-    end
-
-    % PLAY THE SOUND
-    sound(audio_signal{index_sound}, frequency{index_sound});
-
-    % Show hand that will be used
-    texture_hand = Screen('MakeTexture', window, image_hand);
-    Screen('DrawTexture',window,texture_hand,[],[20 20 size(image_hand,2) size(image_hand,1)]);
-    DrawFormattedText(window, '+', 'center', 'center', white);
-    Screen('Flip', window);
-    pause(4)  % TODO: put into experiments/ld_parameters.m
-
-    % record keys
-    % display red cross for 1 second
-    [quit, ~, ~] = displayCross(param.keyboard, window, param.shortRest, ...
-                                        0, 0, 'red', 100, param.shortRest, true, l_seqUsed);
-    if quit
-        Screen('CloseAll')
-        break;
-    end
-
-    if ~quit
-        % Testing number of good sequences entered
-        logoriginal{length(logoriginal)+1}{1} = num2str(GetSecs - timeStartExperience);
-        logoriginal{length(logoriginal)}{2} = param.task;
-    
-        [quit, keysPressed, timePressed] = displayCross(...
-            param.keyboard, window,...
-            0,param.IntroNbSeq*length(l_seqUsed),...
-            0,'green',100, 100, true, l_seqUsed);
-
-        [keys_as_sequence_element,  keys_source_keyboard_value] = ...
-            ld_convertMultipleKeys(keysPressed, param.keyboard, ...
-            param.keyboard_key_to_task_element);
-
-        % Find Good sequences
-        str_keys = num2str(keys_as_sequence_element);
-        str_l_seqUsed = num2str(l_seqUsed);
-
-        % Display good sequences and total time
-        disp([num2str(size(strfind(str_keys,str_l_seqUsed),2)) ' good sequences']);
-        disp(num2str(round(10*onset.seqDur)/10));
-
-        % Record Keys
-        for nbKeys = 1:length(keys_as_sequence_element)
-            logoriginal{end+1}{1} = num2str(timePressed(nbKeys) - timeStartExperience );
-            logoriginal{end}{2} = 'rep';
-            logoriginal{end}{3} = num2str(keys_as_sequence_element(nbKeys));
-            logoriginal{end}{4} = num2str(keys_source_keyboard_value(nbKeys));
+    subject_has_completed_introNb_sequences = false;
+    while ~subject_has_completed_introNb_sequences
+        % display white cross for 200ms
+        [quit, ~, ~] = displayCross(param.keyboard, window, 0.2, ...
+                                            0, 0, 'white', 100, 0.2, false,...
+                                            []);
+        if quit
+            Screen('CloseAll')
+            break;
         end
-    else
-        break
+    
+        % PLAY THE SOUND
+        sound(audio_signal{index_sound}, frequency{index_sound});
+    
+        % Show hand that will be used
+        texture_hand = Screen('MakeTexture', window, image_hand);
+        Screen('DrawTexture',window,texture_hand,[],[20 20 size(image_hand,2) size(image_hand,1)]);
+        DrawFormattedText(window, '+', 'center', 'center', white);
+        Screen('Flip', window);
+        pause(4)  % TODO: put into experiments/ld_parameters.m
+    
+        % record keys
+        % display red cross for 1 second
+        [quit, ~, ~] = displayCross(param.keyboard, window, param.shortRest, ...
+                                            0, 0, 'red', 100, param.shortRest, true, l_seqUsed);
+        if quit
+            Screen('CloseAll')
+            break;
+        end
+    
+        if ~quit
+            % Testing number of good sequences entered
+            logoriginal{length(logoriginal)+1}{1} = num2str(GetSecs - timeStartExperience);
+            logoriginal{length(logoriginal)}{2} = param.task;
+        
+            [quit, keysPressed, timePressed] = displayCross(...
+                param.keyboard, window,...
+                0,param.IntroNbSeq*length(l_seqUsed),...
+                0,'green',100, 100, true, l_seqUsed);
+    
+            [keys_as_sequence_element,  keys_source_keyboard_value] = ...
+                ld_convertMultipleKeys(keysPressed, param.keyboard, ...
+                param.keyboard_key_to_task_element);
+    
+            % Find Good sequences
+            str_keys = num2str(keys_as_sequence_element);
+            str_l_seqUsed = num2str(l_seqUsed);
+    
+            % Display good sequences and total time
+            disp([num2str(size(strfind(str_keys,str_l_seqUsed),2)) ' good sequences']);
+            disp(num2str(round(10*onset.seqDur)/10));
+    
+            % Record Keys
+            for nbKeys = 1:length(keys_as_sequence_element)
+                logoriginal{end+1}{1} = num2str(timePressed(nbKeys) - timeStartExperience );
+                logoriginal{end}{2} = 'rep';
+                logoriginal{end}{3} = num2str(keys_as_sequence_element(nbKeys));
+                logoriginal{end}{4} = num2str(keys_source_keyboard_value(nbKeys));
+            end
+        else
+            break
+        end
+        % display red cross for 1 second
+        [quit, ~, ~] = displayCross(param.keyboard, window, param.shortRest, ...
+                                            0, 0, 'red', 100, param.shortRest, true, l_seqUsed);
+        Screen('TextSize',window, 40);
+        if size(strfind(str_keys,str_l_seqUsed),2) == param.IntroNbSeq
+            subject_has_completed_introNb_sequences = true;
+            DrawFormattedText(window,'You got it right!','center','center',gold);
+            Screen('Flip', window);
+            pause(1)
+            sound(audio_signal{index_sound}, frequency{index_sound});
+            pause(3)
+        else
+            DrawFormattedText(window,'Let s try again','center',100,gold);
+            DrawFormattedText(window, '+', 'center', 'center', white);
+            Screen('Flip', window);
+            pause(3)
+        end
     end
-    % display red cross for 1 second
-    [quit, ~, ~] = displayCross(param.keyboard, window, param.shortRest, ...
-                                        0, 0, 'red', 100, param.shortRest, true, l_seqUsed);
-
+    % jittered rest
+    pause(randi([1 5]))
 end
 
 Screen('CloseAll');
