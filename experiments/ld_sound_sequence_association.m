@@ -22,6 +22,11 @@ onset = struct(...                              % onset vector
     'seqDur',   [] ...
     );
 
+% defining local durations
+white_cross_before_sound_duration  = 0.2; % in seconds
+show_hand_duration  = 3; % in seconds
+red_cross_duration = 3; % in seconds
+
 logoriginal = [];
 duration = 0;
 standard = 0;
@@ -114,8 +119,8 @@ for i = 1:numel(learning_sequence_a_or_b)
     subject_has_completed_introNb_sequences = false;
     while ~subject_has_completed_introNb_sequences && ~quit
         % display white cross for 200ms
-        [quit, ~, ~] = displayCross(param.keyboard, window, 0.2, ...
-                                            0, 0, 'white', 100, 0.2, false,...
+        [quit, ~, ~] = displayCross(param.keyboard, window, white_cross_before_sound_duration, ...
+                                            0, 0, 'white', 100, white_cross_before_sound_duration, false,...
                                             []);
         if quit
             Screen('CloseAll')
@@ -130,12 +135,12 @@ for i = 1:numel(learning_sequence_a_or_b)
         Screen('DrawTexture',window,texture_hand,[],[20 20 size(image_hand,2) size(image_hand,1)]);
         DrawFormattedText(window, '+', 'center', 'center', white);
         Screen('Flip', window);
-        pause(param.shortRest)
-    
+        pause(show_hand_duration)
+        
         % record keys
         % display red cross for 1 second
-        [quit, ~, ~] = displayCross(param.keyboard, window, param.shortRest, ...
-                                            0, 0, 'red', 100, param.shortRest, true, l_seqUsed);
+        [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
+                                            0, 0, 'red', 100, red_cross_duration, true, l_seqUsed);
         if quit
             Screen('CloseAll')
             break;
@@ -148,7 +153,7 @@ for i = 1:numel(learning_sequence_a_or_b)
         
             [quit, keysPressed, timePressed] = displayCross(...
                 param.keyboard, window,...
-                0,param.IntroNbSeq*length(l_seqUsed),...
+                0,param.nbSeqPerMiniBlock*length(l_seqUsed),...
                 0,'green',100, 100, true, l_seqUsed);
     
             [keys_as_sequence_element,  keys_source_keyboard_value] = ...
@@ -174,10 +179,10 @@ for i = 1:numel(learning_sequence_a_or_b)
             break
         end
         % display red cross for 1 second
-        [quit, ~, ~] = displayCross(param.keyboard, window, param.shortRest, ...
-                                            0, 0, 'red', 100, param.shortRest, true, l_seqUsed);
+        [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
+                                            0, 0, 'red', 100, red_cross_duration, true, l_seqUsed);
         Screen('TextSize',window, param.textSize);
-        if size(strfind(str_keys,str_l_seqUsed),2) == param.IntroNbSeq
+        if size(strfind(str_keys,str_l_seqUsed),2) == param.nbSeqPerMiniBlock
             subject_has_completed_introNb_sequences = true;
             DrawFormattedText(window,'You got it right!','center','center',gold);
             Screen('Flip', window);
@@ -192,7 +197,7 @@ for i = 1:numel(learning_sequence_a_or_b)
         end
     end
     % jittered rest
-    pause(randi([1 5]))
+    pause(randi(param.JitterRangeBetweenMiniBlocks))
 end
 
 Screen('CloseAll');

@@ -8,21 +8,22 @@ currentOS = lower(system_dependent('getos'));
 param = struct(...
     'rawDir',           HOME, ... 
     'outputDir',        [HOME, 'output', filesep], ...      % output directory to save data (onset and .mat)
-    'textSize',         40, ...                 % text size
-    'LeftOrRightHand',  'unset',...                   % 1 = Left Hand, 2 = Right Hand
-    'seqA',             [2 4 1 3 4 2 3 1], ...        % sequence A to execute
-    'seqB',             [2 1 4 3 2 3 4 1], ...        % sequence B to execute
-    'nbBlocks',         2, ...                  % number of blocs during task
-    'nbBlocksDayOne',   10, ...                 % number of blocs during task
-    'nbBlocksDayTwo',   8, ...                  % number of blocs during task
-    'nbKeys',           20, ...                 % number of keys during task
-    'IntroNbSeq',       3, ...                  % nb of sequences for pre-training    
-    'durRest',          15,...                  % Duration of the Rest period
-    'shortRest',        3,...                   % in seconds
-    'language',         2, ...                  % 1 = french (default); 2 = english
-    'fullscreen',       0, ...                  % 0: subwindow, 1: whole desktop => see createWindow.m for modifications
-    'numMonitor',       0, ...                  % 0: 1 monitor, 1: two monitors
-    'flipMonitor',      0, ...                  % 0: don't flip, 1: flip monitor
+    'textSize',         40, ...                             % text size
+    'LeftOrRightHand',  'unset',...                         % 1 = Left Hand, 2 = Right Hand
+    'seqA',             [2 4 1 3 4 2 3 1], ...              % sequence A to execute
+    'seqB',             [2 1 4 3 2 3 4 1], ...              % sequence B to execute
+    'nbSeqIntro',       3, ...                              % nb of sequences for pre-training
+    'nbSeqPerMiniBlock',3, ...                              % nb of sequences to complete per mini block during training
+    'nbSeqPerTestBlock',10, ...                             % nb of sequences to complete per test block
+    'nbMiniBlocks',     [30 25 25], ...                     % number of mini-blocks for each sequence for each training phase
+    'nbTestBlocks',     3, ...                              % number of test blocks for each sequence
+    'maxNbMiniBlocksSameSeq', 3, ...                        % no more than X consecutive trial with the same sequence
+    'JitterRangeBetweenMiniBlocks', [1 5],...               % lower and upper boundary or jittered rest between mini blocks
+    'durRest',          15,...                              % Duration of the Rest period
+    'durNoResponse',    5,...                               % max response time duration in seconds
+    'fullscreen',       0, ...                                  % 0: subwindow, 1: whole desktop => see createWindow.m for modifications
+    'numMonitor',       0, ...                              % 0: 1 monitor, 1: two monitors
+    'flipMonitor',      0, ...                              % 0: don't flip, 1: flip monitor
     'os',               currentOS ...
 );
 

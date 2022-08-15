@@ -19,6 +19,12 @@ function [returnCode] = ld_intro(param)
 % CREATION OF THE WINDOW
 window = createWindow(param);
 
+
+% defining local durations
+show_hand_duration  = 3; % in seconds
+red_cross_duration = 3; % in seconds
+
+
 % % Get information about the task
 % l_seqUsed = param.seqA;
 
@@ -76,7 +82,7 @@ for i = 1:numel(learning_sequence_a_or_b)
     Screen('DrawTexture',window,texture_hand,[],[20 20 size(image_hand,2) size(image_hand,1)]);
     Screen('Flip', window);
     
-    pause(3)
+    pause(show_hand_duration)
     Screen('FillRect', window, BlackIndex(window));
     
     % showing the seqquence
@@ -88,9 +94,9 @@ for i = 1:numel(learning_sequence_a_or_b)
     Screen('Flip', window);
     pause(shortRest)
     
-    % display red cross for 1 second
-    [quit, ~, ~] = displayCross(param.keyboard, window, param.shortRest, ...
-                                        0, 0, 'red', 100, param.shortRest, true, l_seqUsed);
+    % display red cross
+    [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
+                                        0, 0, 'red', 100, red_cross_duration, true, l_seqUsed);
 
     % subject must type sequence once correctly
     if ~quit
@@ -98,7 +104,7 @@ for i = 1:numel(learning_sequence_a_or_b)
         logoriginal{length(logoriginal)+1}{1} = num2str(GetSecs - timeStartExperience);
         logoriginal{length(logoriginal)}{2} = param.task;
         NbSeqOK = 0;
-        while (NbSeqOK < param.IntroNbSeq)
+        while (NbSeqOK < param.nbSeqIntro)
     
             % Sequence
             seqOK = 0;
@@ -149,9 +155,9 @@ for i = 1:numel(learning_sequence_a_or_b)
             end
         end
     end
-    % display red cross for 1 second
-    [quit, ~, ~] = displayCross(param.keyboard, window, param.shortRest, ...
-                                        0, 0, 'red', 100, param.shortRest, true, l_seqUsed);
+    % display red cross
+    [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
+                                        0, 0, 'red', 100, red_cross_duration, true, l_seqUsed);
 
 end
 
