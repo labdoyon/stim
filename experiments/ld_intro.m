@@ -86,7 +86,7 @@ for i = 1:numel(learning_sequence_a_or_b)
     DrawFormattedText(window,'AND WITHOUT ANY ERRORS:','center',200,gold);
     DrawFormattedText(window,num2str(l_seqUsed),'center',300,gold);
     Screen('Flip', window);
-    pause(5)  % TODO: put durations into experiments/ld_param.m
+    pause(shortRest)
     
     % display red cross for 1 second
     [quit, ~, ~] = displayCross(param.keyboard, window, param.shortRest, ...

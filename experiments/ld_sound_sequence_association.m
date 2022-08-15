@@ -130,7 +130,7 @@ for i = 1:numel(learning_sequence_a_or_b)
         Screen('DrawTexture',window,texture_hand,[],[20 20 size(image_hand,2) size(image_hand,1)]);
         DrawFormattedText(window, '+', 'center', 'center', white);
         Screen('Flip', window);
-        pause(4)  % TODO: put into experiments/ld_parameters.m
+        pause(param.shortRest)
     
         % record keys
         % display red cross for 1 second
