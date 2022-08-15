@@ -85,6 +85,7 @@ end
 learning_sequence_a_or_b = [1;2];
 learning_sequence_a_or_b = learning_sequence_a_or_b(...
     randperm(numel(learning_sequence_a_or_b)));
+quit = false;
 
 % LOOP: Associating sequence with sound
 for i = 1:numel(learning_sequence_a_or_b)
@@ -111,7 +112,7 @@ for i = 1:numel(learning_sequence_a_or_b)
     end
     
     subject_has_completed_introNb_sequences = false;
-    while ~subject_has_completed_introNb_sequences
+    while ~subject_has_completed_introNb_sequences && ~quit
         % display white cross for 200ms
         [quit, ~, ~] = displayCross(param.keyboard, window, 0.2, ...
                                             0, 0, 'white', 100, 0.2, false,...
