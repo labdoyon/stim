@@ -24,7 +24,7 @@ logoriginal = [];
 
 % Display instruction message
 Screen('TextFont', window, 'Arial');
-Screen('TextSize', window, 40);
+Screen('TextSize', window, param.textSize);
 gold = [255, 215, 0, 255];
 
 % Pre-experiment text

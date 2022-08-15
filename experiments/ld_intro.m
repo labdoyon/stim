@@ -29,7 +29,7 @@ timeStartExperience = GetSecs;
 
 % Display instruction message
 Screen('TextFont', window, 'Arial');
-Screen('TextSize', window, 40); 
+Screen('TextSize', window, param.textSize); 
 gold = [255, 215, 0, 255];
 black = [0, 0, 0, 255];
 
@@ -81,7 +81,7 @@ for i = 1:numel(learning_sequence_a_or_b)
     
     % showing the seqquence
     Screen('TextFont', window, 'Arial');
-    Screen('TextSize', window, 40); 
+    Screen('TextSize', window, param.textSize);
     DrawFormattedText(window,'PERFORM THE SEQUENCE SLOWLY','center',100,gold);
     DrawFormattedText(window,'AND WITHOUT ANY ERRORS:','center',200,gold);
     DrawFormattedText(window,num2str(l_seqUsed),'center',300,gold);

@@ -62,7 +62,7 @@ end
 
 % Display first instruction
 Screen('TextFont',window,'Arial');
-Screen('TextSize',window, 40); 
+Screen('TextSize',window, param.textSize);
 gold = [255,215,0,255];
 white = [255, 255, 255, 255];
 
@@ -176,7 +176,7 @@ for i = 1:numel(learning_sequence_a_or_b)
         % display red cross for 1 second
         [quit, ~, ~] = displayCross(param.keyboard, window, param.shortRest, ...
                                             0, 0, 'red', 100, param.shortRest, true, l_seqUsed);
-        Screen('TextSize',window, 40);
+        Screen('TextSize',window, param.textSize);
         if size(strfind(str_keys,str_l_seqUsed),2) == param.IntroNbSeq
             subject_has_completed_introNb_sequences = true;
             DrawFormattedText(window,'You got it right!','center','center',gold);

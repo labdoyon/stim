@@ -17,7 +17,7 @@ window = createWindow(param);
 
 % Display instruction message
 Screen('TextFont', window, 'Arial');
-Screen('TextSize', window, 40);
+Screen('TextSize', window, param.textSize);
 gold = [255, 215, 0, 255];
 keySet = {1, 2, 3, 4, 7, 8, 9, 0};
 valueSet = {4, 3, 2, 1, 1, 2, 3, 4};
