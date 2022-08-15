@@ -20,5 +20,5 @@ end
 
 keys_as_sequence_element = keys_source_keyboard_value;
 for nbKeys = 1:length(keys_as_sequence_element)
-    keys_as_sequence_element(nbKeys) = keyboard_key_to_task_element(keys_source_keyboard_value);
+    keys_as_sequence_element(nbKeys) = keyboard_key_to_task_element(keys_source_keyboard_value(nbKeys));
 end
