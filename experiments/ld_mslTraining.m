@@ -240,6 +240,11 @@ for i = 1:numel(sequence_a_or_b)
             break;
         end
     end
+
+    if quit
+        Screen('CloseAll')
+        break
+    end
     
     % Testing number of good sequences entered
     logoriginal{length(logoriginal)+1}{1} = num2str(GetSecs - timeStartExperience);
@@ -248,7 +253,7 @@ for i = 1:numel(sequence_a_or_b)
     [quit, keysPressed, timePressed] = displayCross(...
         param.keyboard, window,...
         0,param.nbSeqPerMiniBlock*length(l_seqUsed),...
-        0,'green',100, 100, true, l_seqUsed);
+        0,'green',100, param.durNoResponse, true, l_seqUsed);
 
     [keys_as_sequence_element,  keys_source_keyboard_value] = ...
         ld_convertMultipleKeys(keysPressed, param.keyboard, ...
@@ -308,9 +313,6 @@ end
 save(output_file_name, 'logoriginal', 'param'); 
 
 returnCode = 0;
-
-end
-
 
 end
 
