@@ -1,0 +1,5 @@
+*.asv
+.idea
+stimuli/sound1.wav
+stimuli/sound2.wav
+output/

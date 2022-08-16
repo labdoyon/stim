@@ -110,74 +110,8 @@ varargout{1} = handles.output;
 %%%%%%%%%%%
 %  Buttons 
 %%%%%%%%%%%
+function associate_HandSoundSequence(subject, outputDir, param)
 
-% --- Executes on button press in buttonStart.
-function Start_experiment(D_EXPERIMENT,handles)
-
-% Get param from application data collection
-% Is defined in stim_ChooseDesign
-% Should be removed when done using rmappdata
-param = getappdata(0,'param');
-
-param.numMonitor = get(handles.radiobuttonYesSecondMonitor, 'Value');
-param.flipMonitor = get(handles.radiobuttonYesFlipMonitor, 'Value');
-
-% Common parameters        
-param.subject = get(handles.editSubject, 'String');
-param.outputDir = strcat(param.outputDir,filesep,param.subject);
-if ~exist(param.outputDir, 'dir')
-    mkdir(param.outputDir) % create subject output dir
-end
-
-load([param.outputDir, param.subject,'_','HandSoundSequenceAssociation',...
-    '_' , num2str(1) ,'.mat'], 'HandSoundSequenceAssociation')
-
-param.HandSoundSequenceAssociation = HandSoundSequenceAssociation;
-
-param.outputDir = get(handles.editOutputDir, 'String');
-param.fullscreen = get(handles.radiobuttonFullScreenYes, 'Value');
-
-% Sequences
-param.seqA = str2num(get(handles.editSeqA, 'String'));
-param.seqB = str2num(get(handles.editSeqB, 'String'));
-
-% Testing
-%param.nbBlocks = str2double(get(handles.editNbBlocks, 'String'));
-%param.nbKeys = str2double(get(handles.editNbKeys, 'String'));
-
-% Rest
-param.durRest = str2double(get(handles.editdurRest, 'String'));
-
-% Intro
-param.nbSeqIntro = str2double(get(handles.editIntroNbSeq, 'String'));
-
-ld_menuCond(param)
-
-
-% --- Executes on button press in buttonResults
-function button_start_experiment_Callback(hObject, eventdata, handles)
-% hObject    handle to buttonStart (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-global D_EXPERIMENT;
-% D_EXPERIMENT = 'Condition_A';
-D_EXPERIMENT = '';
-Start_experiment(D_EXPERIMENT,handles)
-
-function button_associate_Callback(hObject, eventdata, handles)
-% hObject    handle to buttonStart (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-param = getappdata(0,'param');
-
-param.subject = get(handles.editSubject, 'String');
-param.outputDir = get(handles.editOutputDir, 'String');
-param.outputDir = strcat(param.outputDir,filesep,param.subject);
-if ~exist(param.outputDir, 'dir')
-    mkdir(param.outputDir) % create subject output dir
-end
 hand_possibilities = 1:length(param.hands);
 sound_possibilities = 1:length(param.sounds);
 hand_choice = randi(hand_possibilities);
@@ -194,6 +128,64 @@ HandSoundSequenceAssociation.seqB.sound = param.sounds{sound_possibilities(1)};
 param.task = 'HandSoundSequenceAssociation';
 
 savefile_HandSoundSequenceAssociation(param, HandSoundSequenceAssociation);
+
+% --- Executes on button press in PreSleep or PostSleep.
+% Those are separate sessions of the experiment
+function param = Start_experiment(D_EXPERIMENT,handles)
+
+% Get param from application data collection
+% Is defined in stim_ChooseDesign
+% Should be removed when done using rmappdata
+param = getappdata(0,'param');
+
+
+param.numMonitor = get(handles.radiobuttonYesSecondMonitor, 'Value');
+param.flipMonitor = get(handles.radiobuttonYesFlipMonitor, 'Value');
+
+% Common parameters        
+param.subject = get(handles.editSubject, 'String');
+param.outputDir = strcat(param.outputDir,filesep,param.subject);
+
+if ~exist(param.outputDir, 'dir')
+    mkdir(param.outputDir) % create subject output dir
+end
+associate_HandSoundSequence(param.subject, param.outputDir, param)
+
+load([param.outputDir, param.subject,'_','HandSoundSequenceAssociation',...
+    '_' , num2str(1) ,'.mat'], 'HandSoundSequenceAssociation')
+
+param.HandSoundSequenceAssociation = HandSoundSequenceAssociation;
+
+param.outputDir = get(handles.editOutputDir, 'String');
+param.fullscreen = get(handles.radiobuttonFullScreenYes, 'Value');
+
+% Sequences
+param.seqA = str2num(get(handles.editSeqA, 'String'));
+param.seqB = str2num(get(handles.editSeqB, 'String'));
+
+
+% --- Executes on button press in buttonResults
+function button_PreSleep_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonStart (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+global D_EXPERIMENT;
+D_EXPERIMENT = 'PreSleep';
+param = Start_experiment(D_EXPERIMENT,handles);
+ld_menuPreSleep(param);
+
+
+% --- Executes on button press in buttonResults
+function button_PostSleep_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonStart (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+global D_EXPERIMENT;
+D_EXPERIMENT = 'PostSleep';
+param = Start_experiment(D_EXPERIMENT,handles);
+ld_menuPostSleep(param);
 
 
 % --- Executes on button press in buttonResults
@@ -220,24 +212,19 @@ close;
 function setExperimentButton(handles)
 
 % Buttons and panel properties
-set(handles.button_start_experiment_Callback, 'FontWeight', 'normal');
+set(handles.button_PreSleep_Callback, 'FontWeight', 'normal');
+set(handles.button_PostSleep_Callback, 'FontWeight', 'normal');
 set(handles.uipanel_stim_Project, 'Visible', 'off');
+
 
 % Get param from application data collection
 % Is defined in stim_ChooseDesign
 % Should be removed when done using rmappdata
 param = getappdata(0,'param');
 
-set(handles.editNbBlocks, 'String', 'unused');
-set(handles.editNbKeys, 'String', 'unused');
-
+set(handles.editOutputDir, 'String',param.outputDir);
 set(handles.editSeqA, 'String', num2str(param.seqA));
 set(handles.editSeqB, 'String', num2str(param.seqB));
-
-set(handles.editdurRest, 'String', num2str(param.durRest));
-set(handles.editIntroNbSeq, 'String', num2str(param.nbSeqIntro));
-
-set(handles.editOutputDir, 'String', param.outputDir);
 
 if param.fullscreen == 1
     set(handles.radiobuttonFullScreenYes, 'Value', 1);
