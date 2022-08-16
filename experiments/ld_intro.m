@@ -22,6 +22,7 @@ window = createWindow(param);
 
 % defining local durations
 show_hand_duration  = 3; % in seconds
+show_instruction_duration = 3; % in seconds
 red_cross_duration = 3; % in seconds
 
 
@@ -55,16 +56,20 @@ while isempty(strfind(strDecoded, '5'))
 end
 Screen('FillRect', window, BlackIndex(window));
 
+logoriginal{length(logoriginal)+1}{1} = num2str(GetSecs - timeStartExperience);
+logoriginal{length(logoriginal)}{2} = param.task;
+logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+logoriginal{end}{2} = 'START';
+
 learning_sequence_a_or_b = [1;2];
 learning_sequence_a_or_b = learning_sequence_a_or_b(...
     randperm(numel(learning_sequence_a_or_b)));
 
-% Testing number of good sequences entered
-logoriginal{length(logoriginal)+1}{1} = num2str(GetSecs - timeStartExperience);
-logoriginal{length(logoriginal)}{2} = param.task;
-
 % LOOP: Learning sequences
 for i = 1:numel(learning_sequence_a_or_b)
+    if quit
+        break
+    end
 
     if learning_sequence_a_or_b(i) == 1
         l_seqUsed = param.seqA;
@@ -96,18 +101,20 @@ for i = 1:numel(learning_sequence_a_or_b)
     DrawFormattedText(window,'AND WITHOUT ANY ERRORS:','center',200,gold);
     DrawFormattedText(window,num2str(l_seqUsed),'center',300,gold);
     Screen('Flip', window);
-    pause(shortRest)
+    pause(show_instruction_duration)
     
     % display red cross
     logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
     logoriginal{end}{2} = 'Rest';
     [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
                                         0, 0, 'red', 100, red_cross_duration, true, l_seqUsed);
-    [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
-                                        0, 0, 'red', 100, red_cross_duration, true, l_seqUsed);
+    if quit
+        break
+    end
 
     % subject must type sequence once correctly
     if ~quit
+        % Testing number of good sequences entered
         logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
         logoriginal{end}{2} = 'Practice';
         logoriginal{end}{3} = LeftOrRightHand;

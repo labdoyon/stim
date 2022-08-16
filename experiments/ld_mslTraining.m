@@ -138,11 +138,17 @@ logoriginal{end}{2} = 'START';
 
 
 % Display cross
+logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+logoriginal{end}{2} = 'Rest';
+onset.rest(length(onset.rest)+1) = GetSecs - timeStartExperience;
 [quit, keysPressed, timePressed] = displayCross(param.keyboard, window,param.durRest,0,0,'red',100);
 
 if quit
+    logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+    logoriginal{end}{2} = 'STOP MANUALLY';
     Screen('CloseAll')
-    return
+    savefile(param,logoriginal,onset);
+    return;
 end
 
 % TASK
@@ -167,6 +173,15 @@ for i = 1:numel(sequence_a_or_b)
     end
 
     subject_has_picked_correct_sound = false;
+    
+    % LOGGING
+    logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+    logoriginal{end}{2} = 'Practice_SoundChoice';
+    if ~test
+        logoriginal{end}{3} = ['MiniBlock', num2str(i)];
+    else
+        logoriginal{end}{3} = ['Block', num2str(i)];
+    end
 
     while ~quit && ~subject_has_picked_correct_sound
         % display white cross for 200ms
@@ -174,11 +189,17 @@ for i = 1:numel(sequence_a_or_b)
                                             0, 0, 'white', 100, 0.2, false,...
                                             []);
         if quit
+            logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+            logoriginal{end}{2} = 'STOP MANUALLY';
             Screen('CloseAll')
+            savefile(param,logoriginal,onset);
             break;
         end
     
         % PLAY THE SOUND
+        logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+        logoriginal{end}{2} = 'SoundPlayed';
+        logoriginal{end}{3} = param.sounds{index_sound};
         sound(audio_signal{index_sound}, frequency{index_sound});
     
         % Show both hands
@@ -196,8 +217,11 @@ for i = 1:numel(sequence_a_or_b)
         right_hand_key = 0;
         [quit, key, timePressed] = displayCross(param.keyboard, window,durNoResponse,1,0,'white',100, durNoResponse);
         if quit
+            logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+            logoriginal{end}{2} = 'STOP MANUALLY';
             Screen('CloseAll')
-            break
+            savefile(param,logoriginal,onset);
+            break;
         end
         strDecoded = ld_convertKeyCode(key, param.keyboard);
         key = ld_convertOneKey(strDecoded);
@@ -251,18 +275,27 @@ for i = 1:numel(sequence_a_or_b)
     end
 
     if quit
+        logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+        logoriginal{end}{2} = 'STOP MANUALLY';
         Screen('CloseAll')
-        break
+        savefile(param,logoriginal,onset);
+        break;
     end
-    
-    % Testing number of good sequences entered
-    logoriginal{length(logoriginal)+1}{1} = num2str(GetSecs - timeStartExperience);
-    logoriginal{length(logoriginal)}{2} = param.task;
+    onset.seq(end+1) = GetSecs - timeStartExperience;
+    logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+    logoriginal{end}{2} = 'Practice_SequenceTyping';
+    if ~test
+        logoriginal{end}{3} = ['MiniBlock', num2str(i)];
+    else
+        logoriginal{end}{3} = ['Block', num2str(i)];
+    end
 
     [quit, keysPressed, timePressed] = displayCross(...
         param.keyboard, window,...
         0, nbSeqPerBlock*length(l_seqUsed),...
         0,'green',100, param.durNoResponse, true, l_seqUsed);
+    
+    onset.seqDur(end+1) = (GetSecs-timeStartExperience) - onset.seq(end);
 
     [keys_as_sequence_element,  keys_source_keyboard_value] = ...
         ld_convertMultipleKeys(keysPressed, param.keyboard, ...
@@ -289,42 +322,54 @@ for i = 1:numel(sequence_a_or_b)
     end
 
     if quit
+        logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+        logoriginal{end}{2} = 'STOP MANUALLY';
         Screen('CloseAll')
-        break
+        savefile(param,logoriginal,onset);
+        break;
     end
 
     % display red cross
+    onset.rest(length(onset.rest)+1) = GetSecs - timeStartExperience;
+    logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+    logoriginal{end}{2} = 'Rest';
     if ~test && ~quit
         jittered_rest_duration = randi(param.JitterRangeBetweenMiniBlocks);
         [quit, ~, ~] = displayCross(param.keyboard, window, jittered_rest_duration, ...
                                             0, 0, 'red', 100, jittered_rest_duration);
+        logoriginal{end}{3} = 'jittered';
     elseif ~quit
         [quit, keysPressed, timePressed] = displayCross(param.keyboard, window,param.durRest,0,0,'red',100);
     end
 
     if quit
+        logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+        logoriginal{end}{2} = 'STOP MANUALLY';
         Screen('CloseAll')
-        break
+        savefile(param,logoriginal,onset);
+        break;
     end
 
 end
 
 % Display cross
 if ~quit
+    onset.rest(length(onset.rest)+1) = GetSecs - timeStartExperience;
+    logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+    logoriginal{end}{2} = 'Rest';
     [quit, keysPressed, timePressed] = displayCross(param.keyboard, window,param.durRest,0,0,'red',100);
 end
 
-% Save file.mat
-i_name = 1;
-output_file_name = [param.outputDir, param.subject, '_', param.task, '_', ...
-                                            num2str(i_name), '.mat'];
-while exist(output_file_name, 'file')
-    i_name = i_name+1;
-    output_file_name = [param.outputDir, param.subject, '_', param.task, ...
-                                    '_' , num2str(i_name), '.mat'];
-end
-save(output_file_name, 'logoriginal', 'param'); 
 
+% Record end of task
+logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+logoriginal{end}{2} = 'STOP';
+
+% Save file
+savefile(param, logoriginal, onset);
+
+Screen('CloseAll');
+disp('!!! FINISHED !!!');
 returnCode = 0;
 
 end

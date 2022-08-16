@@ -13,8 +13,6 @@ function [returnCode] = ld_sound_sequence_association(param)
 
 % CREATION OF THE WINDOW, initializing experiment
 window = createWindow(param);
-logoriginal = [];
-timeStartExperience = GetSecs;
 
 onset = struct(...                              % onset vector         
     'rest',     [], ...
@@ -86,6 +84,14 @@ while isempty(strfind(strDecoded, '5'))
     strDecoded = ld_convertKeyCode(keyCode, param.keyboard);
 end
 
+param.time = fix(clock);
+timeStartExperience = GetSecs;
+
+logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+logoriginal{end}{2} = param.task;
+logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+logoriginal{end}{2} = 'START';
+
 % Randomization: starting with left or right
 learning_sequence_a_or_b = [1;2];
 learning_sequence_a_or_b = learning_sequence_a_or_b(...
@@ -128,6 +134,9 @@ for i = 1:numel(learning_sequence_a_or_b)
         end
     
         % PLAY THE SOUND
+        logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+        logoriginal{end}{2} = 'SoundPlayed';
+        logoriginal{end}{3} = param.sounds{index_sound};
         sound(audio_signal{index_sound}, frequency{index_sound});
     
         % Show hand that will be used
@@ -138,19 +147,21 @@ for i = 1:numel(learning_sequence_a_or_b)
         pause(show_hand_duration)
         
         % record keys
-        % display red cross for 1 second
+        % display red cross
+        logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+        logoriginal{end}{2} = 'Rest';
         [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
-                                            0, 0, 'red', 100, red_cross_duration, true, l_seqUsed);
+                                            0, 0, 'red', 100, red_cross_duration);
         if quit
             Screen('CloseAll')
             break;
         end
     
         if ~quit
-            % Testing number of good sequences entered
-            logoriginal{length(logoriginal)+1}{1} = num2str(GetSecs - timeStartExperience);
-            logoriginal{length(logoriginal)}{2} = param.task;
-        
+            logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+            logoriginal{end}{2} = 'Practice';
+            logoriginal{end}{3} = LeftOrRightHand;
+
             [quit, keysPressed, timePressed] = displayCross(...
                 param.keyboard, window,...
                 0,param.nbSeqPerMiniBlock*length(l_seqUsed),...
@@ -178,15 +189,20 @@ for i = 1:numel(learning_sequence_a_or_b)
         else
             break
         end
-        % display red cross for 1 second
+        % display red cross
+        logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+        logoriginal{end}{2} = 'Rest';
         [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
-                                            0, 0, 'red', 100, red_cross_duration, true, l_seqUsed);
+                                            0, 0, 'red', 100, red_cross_duration);
         Screen('TextSize',window, param.textSize);
         if size(strfind(str_keys,str_l_seqUsed),2) == param.nbSeqPerMiniBlock
             subject_has_completed_introNb_sequences = true;
             DrawFormattedText(window,'You got it right!','center','center',gold);
             Screen('Flip', window);
             pause(1)
+            logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+            logoriginal{end}{2} = 'SoundPlayed';
+            logoriginal{end}{3} = param.sounds{index_sound};
             sound(audio_signal{index_sound}, frequency{index_sound});
             pause(3)
         else
@@ -197,7 +213,13 @@ for i = 1:numel(learning_sequence_a_or_b)
         end
     end
     % jittered rest
-    pause(randi(param.JitterRangeBetweenMiniBlocks))
+    logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+    logoriginal{end}{2} = 'Rest';
+    logoriginal{end}{3} = 'jittered';
+    jittered_rest_duration = randi(param.JitterRangeBetweenMiniBlocks);
+    [quit, ~, ~] = displayCross(param.keyboard, window, jittered_rest_duration, ...
+                                        0, 0, 'red', 100, jittered_rest_duration);
+    pause()
 end
 
 Screen('CloseAll');
