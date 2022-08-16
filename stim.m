@@ -142,14 +142,14 @@ param.seqA = str2num(get(handles.editSeqA, 'String'));
 param.seqB = str2num(get(handles.editSeqB, 'String'));
 
 % Testing
-param.nbBlocks = str2double(get(handles.editNbBlocks, 'String'));
-param.nbKeys = str2double(get(handles.editNbKeys, 'String'));
+%param.nbBlocks = str2double(get(handles.editNbBlocks, 'String'));
+%param.nbKeys = str2double(get(handles.editNbKeys, 'String'));
 
 % Rest
 param.durRest = str2double(get(handles.editdurRest, 'String'));
 
 % Intro
-param.IntroNbSeq = str2double(get(handles.editIntroNbSeq, 'String'));
+param.nbSeqIntro = str2double(get(handles.editIntroNbSeq, 'String'));
 
 ld_menuCond(param)
 
@@ -228,14 +228,14 @@ set(handles.uipanel_stim_Project, 'Visible', 'off');
 % Should be removed when done using rmappdata
 param = getappdata(0,'param');
 
-set(handles.editNbBlocks, 'String', num2str(param.nbBlocks));
-set(handles.editNbKeys, 'String', num2str(param.nbKeys));
+set(handles.editNbBlocks, 'String', 'unused');
+set(handles.editNbKeys, 'String', 'unused');
 
 set(handles.editSeqA, 'String', num2str(param.seqA));
 set(handles.editSeqB, 'String', num2str(param.seqB));
 
 set(handles.editdurRest, 'String', num2str(param.durRest));
-set(handles.editIntroNbSeq, 'String', num2str(param.IntroNbSeq));
+set(handles.editIntroNbSeq, 'String', num2str(param.nbSeqIntro));
 
 set(handles.editOutputDir, 'String', param.outputDir);
 
