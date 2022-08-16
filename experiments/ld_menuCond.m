@@ -15,31 +15,46 @@ global D_EXPERIMENT;
     while nextMenu
         choice = menu(...
                        strcat('Menu - ', D_EXPERIMENT),...
-                       'Step 1: Adjust sounds volumes',...
-                       'Step 2: Checking keyboard',...
-                       'Step 3: Sequence Familiarization', ...
-                       'Step 4: Association of the sequences and sound',...
-                       'Task',...
+                       'Sound Volume Adjustment',...
+                       'Finger Mapping',...
+                       'Sequence Familiarization', ...
+                       'Sound-Hand-Sequence Association',...
+                       'Training - Phase 1', ...
+                       'Training - Phase 2', ...
+                       'Training - Phase 3', ...
+                       'Test', ...
                        'Quit'...
                        );
-        sessionName = D_EXPERIMENT;
+        sessionName = D_EXPERIMENT;  % It will be 'Day 1' or 'Day 2'
+        % OR 'Pre-Sleep' and 'Post-Sleep'
+
         switch choice
             case 1
-                param.task = ['Step-1_sound-volume-adjustment', sessionName];
+                param.task = ['Sound Volume Adjustment - ', sessionName];
                 ld_adjustVolume(param);
             case 2
-                param.task = ['Verification - ', sessionName];
+                param.task = ['Finger Mapping - ', sessionName];
                 ld_verification(param);
             case 3
-                param.task = ['Phase 1 - ', sessionName];
+                param.task = ['Sequence Familiarization - ', sessionName];
                 ld_intro(param);
             case 4
-                param.task = ['Phase 2 - ', sessionName];
+                param.task = ['Sound-Hand-Sequence Association - ', sessionName];
                 ld_sound_sequence_association(param);
             case 5
-                param.task = ['Task - ', sessionName];
-                ld_task(param);
+                param.task = ['Training - Phase 1 - ', sessionName];
+                ld_mslTraining(param, 1);
             case 6
+                param.task = ['Training - Phase 2 - ', sessionName];
+                ld_mslTraining(param, 2);
+            case 7
+                param.task = ['Training - Phase 3 - ', sessionName];
+                ld_mslTraining(param, 3);
+            case 8 
+                param.task = ['Test - ', sessionName];
+                % put here future program, there will be a call to the test
+                % fct
+            case 9
                 break;
         end
     end
