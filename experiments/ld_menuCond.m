@@ -52,8 +52,7 @@ global D_EXPERIMENT;
                 ld_mslTraining(param, 3);
             case 8 
                 param.task = ['Test - ', sessionName];
-                % put here future program, there will be a call to the test
-                % fct
+                ld_mslTraining(param, 0, true);
             case 9
                 break;
         end

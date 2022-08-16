@@ -1,4 +1,4 @@
-function [returnCode] = ld_mslTraining(param, phase_number)
+function [returnCode] = ld_mslTraining(param, phase_number, test)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % returnCode = ld_mslTraining(param)
 %%
@@ -23,15 +23,24 @@ function [returnCode] = ld_mslTraining(param, phase_number)
 % Thibault Vlieghe 2022/08/10
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+if nargin < 3; test=false; end
+
 
 % INIT
 % CREATION OF THE WINDOW
 window = createWindow(param);
 
 % loading param
-nbMiniBlocks = param.nbMiniBlocks(phase_number) * 2;  % *2 because there are two sequences
-maxNbMiniBlocksSameSeq = param.maxNbMiniBlocksSameSeq;
 durNoResponse = param.durNoResponse;
+if ~test
+    nbBlocks = param.nbMiniBlocks(phase_number) * 2;  % * 2 because there are two sequences
+    maxNbBlocksSameSeq = param.maxNbMiniBlocksSameSeq;
+    nbSeqPerBlock = param.nbSeqPerMiniBlock;
+else
+    nbBlocks = param.nbTestBlocks * 2;  % * 2 because there are two sequences
+    maxNbBlocksSameSeq = param.maxNbTestBlocksSameSeq;
+    nbSeqPerBlock = param.nbSeqPerTestBlock;
+end
 both_hands_keyboard_key_to_task_element = param.both_hands_keyboard_key_to_task_element;
 
 white = param.white;
@@ -86,11 +95,11 @@ end
 
 % Generate mini blocks
 sequence_a_or_b = [];
-while length(sequence_a_or_b) < nbMiniBlocks
-    if length(sequence_a_or_b) < nbMiniBlocks - 6
+while length(sequence_a_or_b) < nbBlocks
+    if length(sequence_a_or_b) < nbBlocks - 6  % 6 is purely arbitrary
         tmp_sequence_a_or_b = vertcat(ones(3,1), 2*ones(3,1));
     else
-        number_mini_blocks = fix(abs(length(sequence_a_or_b) - nbMiniBlocks) / 2);
+        number_mini_blocks = fix(abs(length(sequence_a_or_b) - nbBlocks) / 2);
         tmp_sequence_a_or_b = vertcat(ones(number_mini_blocks,1), ...
             2*ones(number_mini_blocks,1));
     end
@@ -99,7 +108,7 @@ while length(sequence_a_or_b) < nbMiniBlocks
     % verify no uninterrupted sequence of the same 
     attempt_sequence_a_or_b = vertcat(sequence_a_or_b, tmp_sequence_a_or_b);
     longest_uninterrupted_sequence_len = max(diff(find([1,diff(attempt_sequence_a_or_b'),1])));
-    if longest_uninterrupted_sequence_len <= maxNbMiniBlocksSameSeq
+    if longest_uninterrupted_sequence_len <= maxNbBlocksSameSeq
         sequence_a_or_b = attempt_sequence_a_or_b;
     end
 end
@@ -252,7 +261,7 @@ for i = 1:numel(sequence_a_or_b)
 
     [quit, keysPressed, timePressed] = displayCross(...
         param.keyboard, window,...
-        0,param.nbSeqPerMiniBlock*length(l_seqUsed),...
+        0, nbSeqPerBlock*length(l_seqUsed),...
         0,'green',100, param.durNoResponse, true, l_seqUsed);
 
     [keys_as_sequence_element,  keys_source_keyboard_value] = ...
@@ -275,7 +284,7 @@ for i = 1:numel(sequence_a_or_b)
         logoriginal{end}{4} = num2str(keys_source_keyboard_value(nbKeys));
     end
 
-    if size(strfind(str_keys,str_l_seqUsed),2) == param.nbSeqPerMiniBlock
+    if size(strfind(str_keys,str_l_seqUsed),2) == nbSeqPerBlock && ~test
         sound(audio_signal{index_sound}, frequency{index_sound});
     end
 
@@ -285,9 +294,13 @@ for i = 1:numel(sequence_a_or_b)
     end
 
     % display red cross
-    jittered_rest_duration = randi(param.JitterRangeBetweenMiniBlocks);
-    [quit, ~, ~] = displayCross(param.keyboard, window, jittered_rest_duration, ...
-                                        0, 0, 'red', 100, jittered_rest_duration);
+    if ~test && ~quit
+        jittered_rest_duration = randi(param.JitterRangeBetweenMiniBlocks);
+        [quit, ~, ~] = displayCross(param.keyboard, window, jittered_rest_duration, ...
+                                            0, 0, 'red', 100, jittered_rest_duration);
+    elseif ~quit
+        [quit, keysPressed, timePressed] = displayCross(param.keyboard, window,param.durRest,0,0,'red',100);
+    end
 
     if quit
         Screen('CloseAll')

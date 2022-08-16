@@ -19,7 +19,8 @@ param = struct(...
     'nbSeqPerTestBlock',10, ...                             % nb of sequences to complete per test block
     'nbMiniBlocks',     [30 25 25], ...                     % number of mini-blocks for each sequence for each training phase
     'nbTestBlocks',     3, ...                              % number of test blocks for each sequence
-    'maxNbMiniBlocksSameSeq', 3, ...                        % no more than X consecutive trial with the same sequence
+    'maxNbMiniBlocksSameSeq', 3, ...                        % no more than X consecutive trial with the same sequence (Training)
+    'maxNbTestBlocksSameSeq',2, ...                         % no more than X consecutive trial with the same sequence (Test)
     'JitterRangeBetweenMiniBlocks', [1 5],...               % lower and upper boundary or jittered rest between mini blocks
     'durRest',          15,...                              % Duration of the Rest period
     'durNoResponse',    5,...                               % max response time duration in seconds
