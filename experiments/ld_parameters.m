@@ -9,6 +9,8 @@ param = struct(...
     'rawDir',           HOME, ... 
     'outputDir',        [HOME, 'output', filesep], ...      % output directory to save data (onset and .mat)
     'textSize',         40, ...                             % text size
+    'gold',             [255,215,0,255], ...
+    'white',            [255, 255, 255, 255], ...
     'LeftOrRightHand',  'unset',...                         % 1 = Left Hand, 2 = Right Hand
     'seqA',             [2 4 1 3 4 2 3 1], ...              % sequence A to execute
     'seqB',             [2 1 4 3 2 3 4 1], ...              % sequence B to execute
@@ -49,8 +51,13 @@ keySet = {7, 8, 9, 0};
 valueSet = {1, 2, 3, 4};
 right_hand_keyboard_key_to_task_element = containers.Map(keySet,valueSet);
 
+keySet = {1, 2, 3, 4, 7, 8, 9, 0};
+valueSet = {4, 3, 2, 1, 1, 2, 3, 4};
+both_hands_keyboard_key_to_task_element = containers.Map(keySet,valueSet);
+
 param.left_hand_keyboard_key_to_task_element = left_hand_keyboard_key_to_task_element;
 param.right_hand_keyboard_key_to_task_element = right_hand_keyboard_key_to_task_element;
+param.both_hands_keyboard_key_to_task_element = both_hands_keyboard_key_to_task_element;
 
 if strfind(currentOS,'microsoft')
     LoadPsychHID
