@@ -59,6 +59,10 @@ learning_sequence_a_or_b = [1;2];
 learning_sequence_a_or_b = learning_sequence_a_or_b(...
     randperm(numel(learning_sequence_a_or_b)));
 
+% Testing number of good sequences entered
+logoriginal{length(logoriginal)+1}{1} = num2str(GetSecs - timeStartExperience);
+logoriginal{length(logoriginal)}{2} = param.task;
+
 % LOOP: Learning sequences
 for i = 1:numel(learning_sequence_a_or_b)
 
@@ -95,14 +99,18 @@ for i = 1:numel(learning_sequence_a_or_b)
     pause(shortRest)
     
     % display red cross
+    logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+    logoriginal{end}{2} = 'Rest';
+    [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
+                                        0, 0, 'red', 100, red_cross_duration, true, l_seqUsed);
     [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
                                         0, 0, 'red', 100, red_cross_duration, true, l_seqUsed);
 
     % subject must type sequence once correctly
     if ~quit
-        % Testing number of good sequences entered
-        logoriginal{length(logoriginal)+1}{1} = num2str(GetSecs - timeStartExperience);
-        logoriginal{length(logoriginal)}{2} = param.task;
+        logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+        logoriginal{end}{2} = 'Practice';
+        logoriginal{end}{3} = LeftOrRightHand;
         NbSeqOK = 0;
         while (NbSeqOK < param.nbSeqIntro)
     
@@ -156,6 +164,8 @@ for i = 1:numel(learning_sequence_a_or_b)
         end
     end
     % display red cross
+    logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+    logoriginal{end}{2} = 'Rest';
     [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
                                         0, 0, 'red', 100, red_cross_duration, true, l_seqUsed);
 
