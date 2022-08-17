@@ -152,7 +152,7 @@ end
 associate_HandSoundSequence(param.subject, param.outputDir, param)
 
 load([param.outputDir, param.subject,'_','HandSoundSequenceAssociation',...
-    '_' , num2str(1) ,'.mat'], 'HandSoundSequenceAssociation')
+    '.mat'], 'HandSoundSequenceAssociation')
 
 param.HandSoundSequenceAssociation = HandSoundSequenceAssociation;
 
