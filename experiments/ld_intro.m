@@ -107,7 +107,7 @@ for i = 1:numel(learning_sequence_a_or_b)
     logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
     logoriginal{end}{2} = 'Rest';
     [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
-                                        0, 0, 'red', 100, red_cross_duration, true, l_seqUsed);
+                                        0, 0, 'red', 100, red_cross_duration);
     if quit
         break
     end
@@ -126,7 +126,9 @@ for i = 1:numel(learning_sequence_a_or_b)
             index = 0;
             keyTmp = [];
             while seqOK == 0
-                [quit, key, timePressed] = displayCross(param.keyboard, window,0,1,0,'green',100, 100, true, l_seqUsed);
+                [quit, key, timePressed] = displayCross(...
+                    param.keyboard, window,0,1,0,'green',100, 100, ...
+                    true, l_seqUsed, param.textSize);
                 if quit 
                     break; 
                 end
@@ -174,7 +176,7 @@ for i = 1:numel(learning_sequence_a_or_b)
     logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
     logoriginal{end}{2} = 'Rest';
     [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
-                                        0, 0, 'red', 100, red_cross_duration, true, l_seqUsed);
+                                        0, 0, 'red', 100, red_cross_duration);
 
 end
 
