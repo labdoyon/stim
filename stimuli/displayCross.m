@@ -8,7 +8,8 @@ function [quit, keysPressed, timePressed] = displayCross(...
     size, ...
     wait_max, ...
     display_sequence_above_cross, ...
-    sequence)
+    sequence, ...
+    text_size)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % [quit, keysPressed, timePressed] = en_stimCross(duration, nbKeys, color,
 % size, frequence, responseBox, timeOffset)
@@ -32,6 +33,7 @@ function [quit, keysPressed, timePressed] = displayCross(...
 
 % Init
 % if nargin < 7 timeOffset = 0; end
+if nargin < 11; text_size = 40; end
 if nargin < 9; display_sequence_above_cross = false; sequence=[]; end
 if nargin < 8; wait_max = 3600; end
 if nargin < 7; size = 100; end
@@ -64,7 +66,7 @@ end
 if (frequency == 0)
     % Display cross    
     Screen('TextFont', window, 'Arial');
-    Screen('TextSize', window, 40 );  % TODO: put into experiments/ld_parameters.m
+    Screen('TextSize', window, text_size);
     if display_sequence_above_cross
         DrawFormattedText(window, num2str(sequence), 'center',100, gold);
     end
