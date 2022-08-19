@@ -31,15 +31,15 @@ standard = 0;
 
 % load sound volume adjustment in dB
 i_name = 1;
-output_file_name = [param.outputDir, param.subject, '_', 'Step-1_sound-volume-adjustment', '_', ...
+output_file_name = [param.outputDir, param.subject, '_', 'Sound Volume Adjustment - PreSleep', '_', ...
                                             num2str(i_name), '.mat'];
 while exist(output_file_name, 'file')
     i_name = i_name+1;
-    output_file_name = [param.outputDir, param.subject, '_', 'Step-1_sound-volume-adjustment', ...
+    output_file_name = [param.outputDir, param.subject, '_', 'Sound Volume Adjustment - PreSleep', ...
                                     '_' , num2str(i_name), '.mat'];
 end
 i_name = i_name-1;
-output_file_name = [param.outputDir, param.subject, '_', 'Step-1_sound-volume-adjustment', ...
+output_file_name = [param.outputDir, param.subject, '_', 'Sound Volume Adjustment - PreSleep', ...
                                 '_' , num2str(i_name), '.mat'];
 load(output_file_name, 'sound_adjustment')
 param.sound_adjustment = sound_adjustment;
@@ -117,12 +117,18 @@ for i = 1:numel(learning_sequence_a_or_b)
     if strcmp(LeftOrRightHand, 'left_hand')
         image_hand = imread([param.rawDir 'stimuli' filesep 'left-hand_with-numbers.png']); % Left Hand
         param.keyboard_key_to_task_element = param.left_hand_keyboard_key_to_task_element;
+        hand_position = [20 20 size(image_hand,2) size(image_hand,1)];
     elseif strcmp(LeftOrRightHand, 'right_hand')
         image_hand = imread([param.rawDir 'stimuli' filesep 'right-hand_with-numbers.png']); % Right Hand
         param.keyboard_key_to_task_element = param.right_hand_keyboard_key_to_task_element;
+        hand_position = [param.screenResolution(1)-size(image_hand,2) ...
+                    20 ...
+                    param.screenResolution(1)-20 ...
+                    size(image_hand,1)];
     end
     
     subject_has_completed_introNb_sequences = false;
+    sound_never_played = true;
     while ~subject_has_completed_introNb_sequences && ~quit
         % display white cross for 200ms
         [quit, ~, ~] = displayCross(param.keyboard, window, white_cross_before_sound_duration, ...
@@ -138,10 +144,13 @@ for i = 1:numel(learning_sequence_a_or_b)
         logoriginal{end}{2} = 'SoundPlayed';
         logoriginal{end}{3} = param.sounds{index_sound};
         sound(audio_signal{index_sound}, frequency{index_sound});
-    
+        if sound_never_played && param.repeat_sound_first_time
+            sound(audio_signal{index_sound}, frequency{index_sound});
+        end
+        sound_never_played = false;
         % Show hand that will be used
         texture_hand = Screen('MakeTexture', window, image_hand);
-        Screen('DrawTexture',window,texture_hand,[],[20 20 size(image_hand,2) size(image_hand,1)]);
+        Screen('DrawTexture',window,texture_hand,[],hand_position);
         DrawFormattedText(window, '+', 'center', 'center', white);
         Screen('Flip', window);
         pause(show_hand_duration)
@@ -206,8 +215,10 @@ for i = 1:numel(learning_sequence_a_or_b)
             sound(audio_signal{index_sound}, frequency{index_sound});
             pause(3)
         else
+            Screen('TextSize',window, 100);
             DrawFormattedText(window,'Let s try again','center',100,gold);
             DrawFormattedText(window, '+', 'center', 'center', white);
+            Screen('TextSize',window, param.textSize);
             Screen('Flip', window);
             pause(3)
         end
@@ -219,7 +230,6 @@ for i = 1:numel(learning_sequence_a_or_b)
     jittered_rest_duration = randi(param.JitterRangeBetweenMiniBlocks);
     [quit, ~, ~] = displayCross(param.keyboard, window, jittered_rest_duration, ...
                                         0, 0, 'red', 100, jittered_rest_duration);
-    pause()
 end
 
 Screen('CloseAll');

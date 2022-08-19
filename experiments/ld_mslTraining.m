@@ -62,15 +62,15 @@ gold = [255,215,0,255];
 
 % load sound volume adjustment in dB
 i_name = 1;
-output_file_name = [param.outputDir, param.subject, '_', 'Step-1_sound-volume-adjustment', '_', ...
+output_file_name = [param.outputDir, param.subject, '_', 'Sound Volume Adjustment - PreSleep', '_', ...
                                             num2str(i_name), '.mat'];
 while exist(output_file_name, 'file')
     i_name = i_name+1;
-    output_file_name = [param.outputDir, param.subject, '_', 'Step-1_sound-volume-adjustment', ...
+    output_file_name = [param.outputDir, param.subject, '_', 'Sound Volume Adjustment - PreSleep', ...
                                     '_' , num2str(i_name), '.mat'];
 end
 i_name = i_name-1;
-output_file_name = [param.outputDir, param.subject, '_', 'Step-1_sound-volume-adjustment', ...
+output_file_name = [param.outputDir, param.subject, '_', 'Sound Volume Adjustment - PreSleep', ...
                                 '_' , num2str(i_name), '.mat'];
 load(output_file_name, 'sound_adjustment')
 param.sound_adjustment = sound_adjustment;
@@ -204,18 +204,26 @@ for i = 1:numel(sequence_a_or_b)
     
         % Show both hands
         left_image_hand = imread([param.rawDir 'stimuli' filesep 'left-hand_with-numbers.png']); % Left Hand
+        left_hand_position = [20 20 size(left_image_hand,2) size(left_image_hand,1)];
         right_image_hand = imread([param.rawDir 'stimuli' filesep 'right-hand_with-numbers.png']); % Right Hand
+        right_hand_position = [param.screenResolution(1)-size(right_image_hand,2) ...
+                                          20 ...
+                                          param.screenResolution(1)-20 ...
+                                          size(right_image_hand,1)];
         texture_left_hand = Screen('MakeTexture', window, left_image_hand);
         texture_right_hand = Screen('MakeTexture', window, right_image_hand);
-        Screen('DrawTexture',window,texture_left_hand,[],[20 20 size(left_image_hand,2) size(left_image_hand,1)]);
-        Screen('DrawTexture',window,texture_right_hand,[],[20 20 size(right_image_hand,2) size(right_image_hand,1)]);
+        Screen('DrawTexture',window,texture_left_hand,[],left_hand_position);
+        Screen('DrawTexture',window,texture_right_hand,[],right_hand_position);
+
         DrawFormattedText(window, '+', 'center', 'center', white);
         Screen('Flip', window);
         
         hand_chosen = 'unset';
         left_hand_key = 0;
         right_hand_key = 0;
-        [quit, key, timePressed] = displayCross(param.keyboard, window,durNoResponse,1,0,'white',100, durNoResponse);
+        timeStartReading = GetSecs;
+        [quit, key, timePressed] = ReadKeys(param.keyboard, timeStartReading, ...
+                                           durNoResponse, 1, 0, 100);
         if quit
             logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
             logoriginal{end}{2} = 'STOP MANUALLY';

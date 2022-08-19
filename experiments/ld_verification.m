@@ -58,9 +58,14 @@ for i = 1:numel(learning_sequence_a_or_b)
     if strcmp(LeftOrRightHand, 'left_hand')
         image_hand = imread([param.rawDir 'stimuli' filesep 'left-hand_with-numbers.png']); % Left Hand
         param.keyboard_key_to_task_element = param.left_hand_keyboard_key_to_task_element;
+        hand_position = [20 20 size(image_hand,2) size(image_hand,1)]
     elseif strcmp(LeftOrRightHand, 'right_hand')
         image_hand = imread([param.rawDir 'stimuli' filesep 'right-hand_with-numbers.png']); % Right Hand
         param.keyboard_key_to_task_element = param.right_hand_keyboard_key_to_task_element;
+        hand_position = [param.screenResolution(1)-size(image_hand,2) ...
+                                    20 ...
+                                    param.screenResolution(1)-20 ...
+                                    size(image_hand,1)];
     end
     texture_hand = Screen('MakeTexture', window, image_hand);
 
@@ -87,7 +92,7 @@ for i = 1:numel(learning_sequence_a_or_b)
     end
 
     verif = [1,2,3,4];
-    Screen('DrawTexture',window,texture_hand,[],[20 20 size(image_hand,2) size(image_hand,1)]);
+    Screen('DrawTexture',window,texture_hand,[], hand_position);
 
 
 
