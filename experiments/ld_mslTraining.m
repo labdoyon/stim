@@ -237,8 +237,10 @@ for i = 1:numel(sequence_a_or_b)
             key_task_value = both_hands_keyboard_key_to_task_element(key);
         catch ME
             switch ME.identifier
+                case 'MATLAB:Containers:TypeMismatch'
+                    key_task_value = 6;
                 case 'MATLAB:Containers:Map:NoKey'
-                    key = 0;
+                    key_task_value = 6;
                 otherwise
                     ME.identifier
                     rethrow(ME)
@@ -252,7 +254,9 @@ for i = 1:numel(sequence_a_or_b)
             catch ME
                 switch ME.identifier
                     case 'MATLAB:Containers:Map:NoKey'
-                        left_hand_key = 0;
+                        left_hand_key = 6;
+                    case 'MATLAB:Containers:TypeMismatch'
+                        left_hand_key = 6;
                     otherwise
                         ME.identifier
                         rethrow(ME)
@@ -266,7 +270,9 @@ for i = 1:numel(sequence_a_or_b)
             catch ME
                 switch ME.identifier
                     case 'MATLAB:Containers:Map:NoKey'
-                        right_hand_key = 0;
+                        right_hand_key = 6;
+                    case 'MATLAB:Containers:TypeMismatch'
+                        right_hand_key = 6;
                     otherwise
                         ME.identifier
                         rethrow(ME)
