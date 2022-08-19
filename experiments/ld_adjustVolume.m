@@ -54,6 +54,9 @@ for index_sound = 1:length(param.sounds)
 
     % Play the sound one first time
     sound(y, Fs);
+    if param.repeat_sound_first_time
+        sound(y, Fs);
+    end
     
     sound_adjusted = false;
     while ~sound_adjusted
@@ -68,7 +71,9 @@ for index_sound = 1:length(param.sounds)
         catch ME
             switch ME.identifier
                 case 'MATLAB:Containers:Map:NoKey'
-                    key = 0;
+                    key = 'NaN';
+                case 'MATLAB:Containers:TypeMismatch'
+                    key = 'NaN';
                 otherwise
                     ME.identifier
                     rethrow(ME)

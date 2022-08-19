@@ -24,10 +24,12 @@ param = struct(...
     'JitterRangeBetweenMiniBlocks', [1 5],...               % lower and upper boundary or jittered rest between mini blocks
     'durRest',          15,...                              % Duration of the Rest period
     'durNoResponse',    5,...                               % max response time duration in seconds
-    'fullscreen',       0, ...                                  % 0: subwindow, 1: whole desktop => see createWindow.m for modifications
+    'fullscreen',       0, ...                              % 0: subwindow, 1: whole desktop => see createWindow.m for modifications
     'numMonitor',       0, ...                              % 0: 1 monitor, 1: two monitors
     'flipMonitor',      0, ...                              % 0: don't flip, 1: flip monitor
-    'os',               currentOS ...
+    'screenResolution', [1920 1080],...
+    'os',               currentOS, ...
+    'repeat_sound_first_time',     1 ...                    % for some reason sound doesn't play on the first time
 );
 
 param.keyboard = KbName('KeyNames');

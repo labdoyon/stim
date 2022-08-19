@@ -6,7 +6,7 @@ function key = ld_convertOneKey(strDecoded)
 %
 %
 
-key = 0;
+key = 'NaN';
 
 if ~isempty(strfind(strDecoded, '1'))
     key = 1;
