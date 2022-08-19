@@ -31,6 +31,7 @@ function window = createWindow(param)
     % % a different monitor by supplying a different number in the second
     % % argument to OpenWindow, e.g. Screen('OpenWindow', 2).
     Screen('Preference', 'SkipSyncTests', whichScreen);
+    Screen('Preference', 'SkipSyncTests', 1);
     
     if param.fullscreen == 1
         resolution = [];
