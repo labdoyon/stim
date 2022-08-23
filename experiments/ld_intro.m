@@ -17,8 +17,7 @@ function [returnCode] = ld_intro(param)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % CREATION OF THE WINDOW
-window = createWindow(param);
-
+[window, param.screenResolution] = createWindow(param);
 
 % defining local durations
 show_hand_duration  = 3; % in seconds
@@ -80,19 +79,31 @@ for i = 1:numel(learning_sequence_a_or_b)
         LeftOrRightHand = param.HandSoundSequenceAssociation.seqB.hand;
     end
 
-    % Show hand that will be used
+    screen_width = param.screenResolution(1);
+    screen_height = param.screenResolution(2);
     if strcmp(LeftOrRightHand, 'left_hand')
-        image_hand = imread([param.rawDir 'stimuli' filesep 'left-hand_with-numbers.png']); % Left Hand
-        hand_position = [20 20 size(image_hand,2) size(image_hand,1)];
+        [image_hand, ~, alpha] = imread([param.rawDir 'stimuli' filesep 'left-hand_with-numbers.png']); % Left Hand
+        image_height = size(image_hand,1);
+        image_width = size(image_hand,2);
         param.keyboard_key_to_task_element = param.left_hand_keyboard_key_to_task_element;
+        hand_position = [round(screen_width/2 - image_width - 50) ...
+            round(screen_height/2 - image_height/2) ...
+            round(screen_width/2 - 50) ...
+            round(screen_height/2 + image_height/2)...
+            ];
+
     elseif strcmp(LeftOrRightHand, 'right_hand')
-        image_hand = imread([param.rawDir 'stimuli' filesep 'right-hand_with-numbers.png']); % Right Hand
-        hand_position = [param.screenResolution(1)-size(image_hand,2) ...
-            20 ...
-            param.screenResolution(1)-20 ...
-            size(image_hand,1)];
+        [image_hand, ~, alpha] = imread([param.rawDir 'stimuli' filesep 'right-hand_with-numbers.png']); % Right Hand
+        image_height = size(image_hand,1);
+        image_width = size(image_hand,2);
         param.keyboard_key_to_task_element = param.right_hand_keyboard_key_to_task_element;
+        hand_position = [round(screen_width/2 + 50) ...
+            round(screen_height/2 - image_height/2) ...
+            round(screen_width/2 + image_width + 50) ...
+            round(screen_height/2 + image_height/2)...
+            ];
     end
+
     texture_hand = Screen('MakeTexture', window, image_hand);
 
     Screen('DrawTexture',window,texture_hand,[],hand_position);
@@ -113,8 +124,8 @@ for i = 1:numel(learning_sequence_a_or_b)
     % display red cross
     logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
     logoriginal{end}{2} = 'Rest';
-    [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
-                                        0, 0, 'red', 100, red_cross_duration);
+    [quit, ~, ~] = displayCross(window, param, ...
+                                        red_cross_duration, 0, 0, 'red', 100);
     if quit
         break
     end
@@ -134,8 +145,8 @@ for i = 1:numel(learning_sequence_a_or_b)
             keyTmp = [];
             while seqOK == 0
                 [quit, key, timePressed] = displayCross(...
-                    param.keyboard, window,0,1,0,'green',100, 100, ...
-                    true, l_seqUsed, param.textSize);
+                    window, param, 0,1,0,'green', 100, ...
+                    true, l_seqUsed);
                 if quit 
                     break; 
                 end
@@ -182,8 +193,8 @@ for i = 1:numel(learning_sequence_a_or_b)
     % display red cross
     logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
     logoriginal{end}{2} = 'Rest';
-    [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
-                                        0, 0, 'red', 100, red_cross_duration);
+    [quit, ~, ~] = displayCross(window, param, ...
+                                        red_cross_duration, 0, 0, 'red', 100);
 
 end
 

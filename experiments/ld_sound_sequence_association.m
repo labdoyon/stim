@@ -12,7 +12,7 @@ function [returnCode] = ld_sound_sequence_association(param)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % CREATION OF THE WINDOW, initializing experiment
-window = createWindow(param);
+[window, param.screenResolution] = createWindow(param);
 
 onset = struct(...                              % onset vector         
     'rest',     [], ...
@@ -22,6 +22,7 @@ onset = struct(...                              % onset vector
 
 % defining local durations
 white_cross_before_sound_duration  = 0.2; % in seconds
+sound_hand_delay = 2 ; % in seconds
 show_hand_duration  = 3; % in seconds
 red_cross_duration = 3; % in seconds
 
@@ -114,26 +115,36 @@ for i = 1:numel(learning_sequence_a_or_b)
 
     index_sound = find(strcmp(param.sounds, tmp_sound));
     
+    screen_width = param.screenResolution(1);
+    screen_height = param.screenResolution(2);
     if strcmp(LeftOrRightHand, 'left_hand')
-        image_hand = imread([param.rawDir 'stimuli' filesep 'left-hand_with-numbers.png']); % Left Hand
-        param.keyboard_key_to_task_element = param.left_hand_keyboard_key_to_task_element;
-        hand_position = [20 20 size(image_hand,2) size(image_hand,1)];
-    elseif strcmp(LeftOrRightHand, 'right_hand')
-        image_hand = imread([param.rawDir 'stimuli' filesep 'right-hand_with-numbers.png']); % Right Hand
-        param.keyboard_key_to_task_element = param.right_hand_keyboard_key_to_task_element;
-        hand_position = [param.screenResolution(1)-size(image_hand,2) ...
-                    20 ...
-                    param.screenResolution(1)-20 ...
-                    size(image_hand,1)];
-    end
+            [image_hand, ~, alpha] = imread([param.rawDir 'stimuli' filesep 'left-hand_with-numbers.png']); % Left Hand
+            image_height = size(image_hand,1);
+            image_width = size(image_hand,2);
+            param.keyboard_key_to_task_element = param.left_hand_keyboard_key_to_task_element;
+            hand_position = [round(screen_width/2 - image_width - 50) ...
+                round(screen_height/2 - image_height/2) ...
+                round(screen_width/2 - 50) ...
+                round(screen_height/2 + image_height/2)...
+                ];
+
+        elseif strcmp(LeftOrRightHand, 'right_hand')
+            [image_hand, ~, alpha] = imread([param.rawDir 'stimuli' filesep 'right-hand_with-numbers.png']); % Right Hand
+            image_height = size(image_hand,1);
+            image_width = size(image_hand,2);
+            param.keyboard_key_to_task_element = param.right_hand_keyboard_key_to_task_element;
+            hand_position = [round(screen_width/2 + 50) ...
+                round(screen_height/2 - image_height/2) ...
+                round(screen_width/2 + image_width + 50) ...
+                round(screen_height/2 + image_height/2)...
+                ];
+        end
     
     subject_has_completed_introNb_sequences = false;
-    sound_never_played = true;
     while ~subject_has_completed_introNb_sequences && ~quit
         % display white cross for 200ms
-        [quit, ~, ~] = displayCross(param.keyboard, window, white_cross_before_sound_duration, ...
-                                            0, 0, 'white', 100, white_cross_before_sound_duration, false,...
-                                            []);
+        [quit, ~, ~] = displayCross(window, param, white_cross_before_sound_duration, ...
+                                            0, 0, 'white');
         if quit
             Screen('CloseAll')
             break;
@@ -144,10 +155,9 @@ for i = 1:numel(learning_sequence_a_or_b)
         logoriginal{end}{2} = 'SoundPlayed';
         logoriginal{end}{3} = param.sounds{index_sound};
         sound(audio_signal{index_sound}, frequency{index_sound});
-        if sound_never_played && param.repeat_sound_first_time
-            sound(audio_signal{index_sound}, frequency{index_sound});
-        end
-        sound_never_played = false;
+        
+        pause(sound_hand_delay)
+
         % Show hand that will be used
         texture_hand = Screen('MakeTexture', window, image_hand);
         Screen('DrawTexture',window,texture_hand,[],hand_position);
@@ -159,8 +169,8 @@ for i = 1:numel(learning_sequence_a_or_b)
         % display red cross
         logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
         logoriginal{end}{2} = 'Rest';
-        [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
-                                            0, 0, 'red', 100, red_cross_duration);
+        [quit, ~, ~] = displayCross(window, param, red_cross_duration, ...
+                                            0, 0, 'red');
         if quit
             Screen('CloseAll')
             break;
@@ -172,9 +182,10 @@ for i = 1:numel(learning_sequence_a_or_b)
             logoriginal{end}{3} = LeftOrRightHand;
 
             [quit, keysPressed, timePressed] = displayCross(...
-                param.keyboard, window,...
+                window, param, ...
                 0,param.nbSeqPerMiniBlock*length(l_seqUsed),...
-                0,'green',100, 100, true, l_seqUsed, param.textSize);
+                0,'green', param.durNoResponse, true, l_seqUsed);
+            
     
             [keys_as_sequence_element,  keys_source_keyboard_value] = ...
                 ld_convertMultipleKeys(keysPressed, param.keyboard, ...
@@ -195,14 +206,24 @@ for i = 1:numel(learning_sequence_a_or_b)
                 logoriginal{end}{3} = num2str(keys_as_sequence_element(nbKeys));
                 logoriginal{end}{4} = num2str(keys_source_keyboard_value(nbKeys));
             end
+
+            if quit
+                Screen('CloseAll')
+                break;
+            end
+
         else
             break
         end
         % display red cross
         logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
         logoriginal{end}{2} = 'Rest';
-        [quit, ~, ~] = displayCross(param.keyboard, window, red_cross_duration, ...
-                                            0, 0, 'red', 100, red_cross_duration);
+        [quit, ~, ~] = displayCross(window, param, red_cross_duration, ...
+                                            0, 0, 'red');
+        if quit
+            Screen('CloseAll')
+            break;
+        end
         Screen('TextSize',window, param.textSize);
         if size(strfind(str_keys,str_l_seqUsed),2) == param.nbSeqPerMiniBlock
             subject_has_completed_introNb_sequences = true;
@@ -215,10 +236,7 @@ for i = 1:numel(learning_sequence_a_or_b)
             sound(audio_signal{index_sound}, frequency{index_sound});
             pause(3)
         else
-            Screen('TextSize',window, 100);
-            DrawFormattedText(window,'Let s try again','center',100,gold);
-            DrawFormattedText(window, '+', 'center', 'center', white);
-            Screen('TextSize',window, param.textSize);
+            DrawFormattedText(window,'Let s try again','center','center',gold);
             Screen('Flip', window);
             pause(3)
         end
@@ -228,8 +246,12 @@ for i = 1:numel(learning_sequence_a_or_b)
     logoriginal{end}{2} = 'Rest';
     logoriginal{end}{3} = 'jittered';
     jittered_rest_duration = randi(param.JitterRangeBetweenMiniBlocks);
-    [quit, ~, ~] = displayCross(param.keyboard, window, jittered_rest_duration, ...
-                                        0, 0, 'red', 100, jittered_rest_duration);
+    [quit, ~, ~] = displayCross(window, param, jittered_rest_duration, ...
+                                        0, 0, 'red');
+    if quit
+        Screen('CloseAll')
+        break;
+    end
 end
 
 Screen('CloseAll');

@@ -1,4 +1,4 @@
-function window = createWindow(param)
+function [window, screenResolution] = createWindow(param)
     % % ---------- Window Setup ----------
     % % Opens a window.
     % 
@@ -49,5 +49,10 @@ function window = createWindow(param)
     end
     %%%%%%
     Screen('FillRect', window, BlackIndex(window));
+
+    screenResolution = Screen('Resolution', whichScreen);
+    width = screenResolution.width;
+    height = screenResolution.height;
+    screenResolution = [width, height];
 
 end

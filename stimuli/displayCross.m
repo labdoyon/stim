@@ -1,15 +1,13 @@
 function [quit, keysPressed, timePressed] = displayCross(...
-    currentKeyboard, ...
     window, ...
+    param, ...
     duration, ...
     nbKeys, ...
     frequency, ...
     color, ...
-    size, ...
     wait_max, ...
     display_sequence_above_cross, ...
-    sequence, ...
-    text_size)
+    sequence)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % [quit, keysPressed, timePressed] = en_stimCross(duration, nbKeys, color,
 % size, frequence, responseBox, timeOffset)
@@ -22,9 +20,10 @@ function [quit, keysPressed, timePressed] = displayCross(...
 %   nbKeys:         number of keys pressed before exit (0 = unlimited)
 %   color:          'red', 'green', 'blue', 'white', 'black', 'yellow', 'orange'
 %   size:           font height ex: 20, 40, 60, 80... (default=100)
-%   frequence:      frequence of the blinking in Hz (0 = no blink)
+%   frequency:      frequence of the blinking in Hz (0 = no blink)
 %   responseBox:    0: Current Design, default (cgKeyMap), 1: kinematic (KbCheck), 2: Current Design (Release button)
 %   timeOffset:     offset to add to the time vector (optional default = 0)
+%   param: misc. param
 % OUTPUT:
 %   quit:           exited before the end (ESC)? (0: no   1:yes)
 %   keysPressed:    vector containing keys that have been pressed 
@@ -32,16 +31,18 @@ function [quit, keysPressed, timePressed] = displayCross(...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Init
+
+currentKeyboard = param.keyboard;
+textSize = param.textSize;
+crossSize = param.crossSize;
+sequence_y_coordinate = round(param.screenResolution(2)/2 - crossSize / 2 - textSize / 2);
 % if nargin < 7 timeOffset = 0; end
-if nargin < 11; text_size = 40; end
-if nargin < 9; display_sequence_above_cross = false; sequence=[]; end
-if nargin < 8; wait_max = 3600; end
-if nargin < 7; size = 100; end
+if nargin < 8; display_sequence_above_cross = false; sequence=[]; end
+if nargin < 7; wait_max = 0; end
 if nargin < 6; color = 'white'; end
 if nargin < 5; frequency = 0; end
 if nargin < 4; nbKeys = 0; end
 if nargin < 3; duration = 0; end
-if duration == 0; duration = 3600; end
 
 quit = 0;
 keysPressed = [];
@@ -63,14 +64,15 @@ switch color
     otherwise
         color = [255, 255, 255, 255];
 end
+
 if (frequency == 0)
     % Display cross    
     Screen('TextFont', window, 'Arial');
-    Screen('TextSize', window, text_size);
+    Screen('TextSize', window, textSize);
     if display_sequence_above_cross
-        DrawFormattedText(window, num2str(sequence), 'center',100, gold);
+        DrawFormattedText(window, num2str(sequence), 'center',sequence_y_coordinate, gold);
     end
-    Screen('TextSize', window, size);
+    Screen('TextSize', window, crossSize);
     DrawFormattedText(window, '+', 'center', 'center', color);
     Screen('Flip', window);
     % Read Keyboard
@@ -84,7 +86,7 @@ else
         % Display cross    
         timeStartReading = GetSecs;
         Screen('TextFont',window, 'Arial');
-        Screen('TextSize',window, size );
+        Screen('TextSize',window, crossSize );
         DrawFormattedText(window, '+', 'center', 'center', color);
         Screen('Flip', window);
         
