@@ -144,7 +144,6 @@ param.flipMonitor = get(handles.radiobuttonYesFlipMonitor, 'Value');
 
 % Common parameters        
 param.subject = get(handles.editSubject, 'String');
-param.outputDir = strcat(param.outputDir,filesep,param.subject);
 
 if ~exist(param.outputDir, 'dir')
     mkdir(param.outputDir) % create subject output dir
