@@ -165,6 +165,7 @@ if quit
     logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
     logoriginal{end}{2} = 'STOP MANUALLY';
     Screen('CloseAll')
+    PsychPortAudio('Close', pahandle);
     savefile(param,logoriginal,onset);
     return;
 end
@@ -210,6 +211,7 @@ for i = 1:numel(sequence_a_or_b)
             logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
             logoriginal{end}{2} = 'STOP MANUALLY';
             Screen('CloseAll')
+            PsychPortAudio('Close', pahandle);
             savefile(param,logoriginal,onset);
             break;
         end
@@ -260,6 +262,7 @@ for i = 1:numel(sequence_a_or_b)
             logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
             logoriginal{end}{2} = 'STOP MANUALLY';
             Screen('CloseAll')
+            PsychPortAudio('Close', pahandle);
             savefile(param,logoriginal,onset);
             break;
         end
@@ -324,6 +327,7 @@ for i = 1:numel(sequence_a_or_b)
         logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
         logoriginal{end}{2} = 'STOP MANUALLY';
         Screen('CloseAll')
+        PsychPortAudio('Close', pahandle);
         savefile(param,logoriginal,onset);
         break;
     end
@@ -372,6 +376,7 @@ for i = 1:numel(sequence_a_or_b)
         logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
         logoriginal{end}{2} = 'STOP MANUALLY';
         Screen('CloseAll')
+        PsychPortAudio('Close', pahandle);
         savefile(param,logoriginal,onset);
         break;
     end
@@ -393,6 +398,7 @@ for i = 1:numel(sequence_a_or_b)
         logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
         logoriginal{end}{2} = 'STOP MANUALLY';
         Screen('CloseAll')
+        PsychPortAudio('Close', pahandle);
         savefile(param,logoriginal,onset);
         break;
     end
