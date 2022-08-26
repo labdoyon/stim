@@ -21,6 +21,16 @@ InitializePsychSound(1);
 % opens sound buffer
 pahandle = PsychPortAudio('Open', [], [], number_channels, []);
 
+% play blank extremely low sound to avoid problem of first sound command not being played
+pause(.1)
+[audio_signal_tmp, frequency_tmp] = audioread(['stimuli\' 'no_sound.wav']);
+audio_signal_tmp = repmat(audio_signal_tmp, number_channels);
+PsychPortAudio('FillBuffer', pahandle, audio_signal_tmp');
+PsychPortAudio('Start', pahandle, 1,0);
+PsychPortAudio('Stop', pahandle, 1);
+
+pause(.1)
+
 onset = struct(...                              % onset vector         
     'rest',     [], ...
     'seq',      [], ...
