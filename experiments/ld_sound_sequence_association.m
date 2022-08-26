@@ -167,9 +167,9 @@ for i = 1:numel(learning_sequence_a_or_b)
         if quit
             logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
             logoriginal{end}{2} = 'STOP MANUALLY';
-            Screen('CloseAll')
-            PsychPortAudio('Close')
             savefile(param,logoriginal,onset);
+            Screen('CloseAll');
+            PsychPortAudio('Close', pahandle);
             return;
         end
     
@@ -196,8 +196,12 @@ for i = 1:numel(learning_sequence_a_or_b)
         [quit, ~, ~] = displayCross(window, param, red_cross_duration, ...
                                             0, 0, 'red');
         if quit
-            Screen('CloseAll')
-            break;
+            logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+            logoriginal{end}{2} = 'STOP MANUALLY';
+            savefile(param,logoriginal,onset);
+            Screen('CloseAll');
+            PsychPortAudio('Close', pahandle);
+            return;
         end
     
         if ~quit
@@ -232,8 +236,12 @@ for i = 1:numel(learning_sequence_a_or_b)
             end
 
             if quit
-                Screen('CloseAll')
-                break;
+                logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+                logoriginal{end}{2} = 'STOP MANUALLY';
+                savefile(param,logoriginal,onset);
+                Screen('CloseAll');
+                PsychPortAudio('Close', pahandle);
+                return;
             end
 
         else
@@ -245,8 +253,12 @@ for i = 1:numel(learning_sequence_a_or_b)
         [quit, ~, ~] = displayCross(window, param, red_cross_duration, ...
                                             0, 0, 'red');
         if quit
-            Screen('CloseAll')
-            break;
+            logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+            logoriginal{end}{2} = 'STOP MANUALLY';
+            savefile(param,logoriginal,onset);
+            Screen('CloseAll');
+            PsychPortAudio('Close', pahandle);
+            return;
         end
         Screen('TextSize',window, param.textSize);
         if size(strfind(str_keys,str_l_seqUsed),2) == param.nbSeqPerMiniBlock
@@ -274,12 +286,16 @@ for i = 1:numel(learning_sequence_a_or_b)
     [quit, ~, ~] = displayCross(window, param, jittered_rest_duration, ...
                                         0, 0, 'red');
     if quit
-        Screen('CloseAll')
-        break;
+        logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+        logoriginal{end}{2} = 'STOP MANUALLY';
+        savefile(param,logoriginal,onset);
+        Screen('CloseAll');
+        PsychPortAudio('Close', pahandle);
+        return;
     end
 end
 
-PsychPortAudio('Close', pahandle);
-Screen('CloseAll');
-% Save file.mat
 savefile(param,logoriginal,onset);
+Screen('CloseAll');
+PsychPortAudio('Close', pahandle);
+% Save file.mat
