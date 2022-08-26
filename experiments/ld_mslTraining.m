@@ -28,7 +28,14 @@ if nargin < 3; test=false; end
 
 % INIT
 % CREATION OF THE WINDOW
-window = createWindow(param);
+[window, param.screenResolution] = createWindow(param);
+
+number_channels = param.number_channels;
+
+% initializes sound driver...the 1 pushes for low latency
+InitializePsychSound(1);
+% opens sound buffer
+pahandle = PsychPortAudio('Open', [], [], number_channels, []);
 
 % loading param
 durNoResponse = param.durNoResponse;
@@ -91,6 +98,7 @@ for index_sound = 1:length(param.sounds)
     system(command);
     [audio_signal{index_sound}, frequency{index_sound}] = ...
         audioread(tmp_sound);
+    audio_signal{index_sound} = repmat(audio_signal{index_sound}, number_channels);
 end
 
 % Generate mini blocks
@@ -141,7 +149,7 @@ logoriginal{end}{2} = 'START';
 logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
 logoriginal{end}{2} = 'Rest';
 onset.rest(length(onset.rest)+1) = GetSecs - timeStartExperience;
-[quit, keysPressed, timePressed] = displayCross(param.keyboard, window,param.durRest,0,0,'red',100);
+[quit, keysPressed, timePressed] = displayCross(window, param, param.durRest,0,0,'red',100);
 
 if quit
     logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
@@ -165,6 +173,7 @@ for i = 1:numel(sequence_a_or_b)
     end
 
     index_sound = find(strcmp(param.sounds, tmp_sound));
+    PsychPortAudio('FillBuffer', pahandle, audio_signal{index_sound}');
     
     if strcmp(LeftOrRightHand, 'left_hand')
         param.keyboard_key_to_task_element = param.left_hand_keyboard_key_to_task_element;
@@ -185,9 +194,8 @@ for i = 1:numel(sequence_a_or_b)
 
     while ~quit && ~subject_has_picked_correct_sound
         % display white cross for 200ms
-        [quit, ~, ~] = displayCross(param.keyboard, window, 0.2, ...
-                                            0, 0, 'white', 100, 0.2, false,...
-                                            []);
+        [quit, ~, ~] = displayCross(window, param,  0.2, ...
+                                            0, 0, 'white', 100);
         if quit
             logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
             logoriginal{end}{2} = 'STOP MANUALLY';
@@ -200,7 +208,8 @@ for i = 1:numel(sequence_a_or_b)
         logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
         logoriginal{end}{2} = 'SoundPlayed';
         logoriginal{end}{3} = param.sounds{index_sound};
-        sound(audio_signal{index_sound}, frequency{index_sound});
+        PsychPortAudio('Start', pahandle, 1,0);
+        PsychPortAudio('Stop', pahandle, 1);
     
         % Show both hands
         left_image_hand = imread([param.rawDir 'stimuli' filesep 'left-hand_with-numbers.png']); % Left Hand
@@ -305,9 +314,9 @@ for i = 1:numel(sequence_a_or_b)
     end
 
     [quit, keysPressed, timePressed] = displayCross(...
-        param.keyboard, window,...
-        0, nbSeqPerBlock*length(l_seqUsed),...
-        0,'green',100, param.durNoResponse, true, l_seqUsed, param.textSize);
+        window, param,...
+        100, nbSeqPerBlock*length(l_seqUsed),...
+        0,'green',param.durNoResponse, true, l_seqUsed)
     
     onset.seqDur(end+1) = (GetSecs-timeStartExperience) - onset.seq(end);
 
@@ -332,7 +341,8 @@ for i = 1:numel(sequence_a_or_b)
     end
 
     if size(strfind(str_keys,str_l_seqUsed),2) == nbSeqPerBlock && ~test
-        sound(audio_signal{index_sound}, frequency{index_sound});
+        PsychPortAudio('Start', pahandle, 1,0);
+        PsychPortAudio('Stop', pahandle, 1);
     end
 
     if quit
@@ -349,11 +359,11 @@ for i = 1:numel(sequence_a_or_b)
     logoriginal{end}{2} = 'Rest';
     if ~test && ~quit
         jittered_rest_duration = randi(param.JitterRangeBetweenMiniBlocks);
-        [quit, ~, ~] = displayCross(param.keyboard, window, jittered_rest_duration, ...
-                                            0, 0, 'red', 100, jittered_rest_duration);
+        [quit, ~, ~] = displayCross(window, param, jittered_rest_duration, ...
+                                            0, 0, 'red', 100);
         logoriginal{end}{3} = 'jittered';
     elseif ~quit
-        [quit, keysPressed, timePressed] = displayCross(param.keyboard, window,param.durRest,0,0,'red',100);
+        [quit, keysPressed, timePressed] = displayCross(window, param, param.durRest,0,0,'red',100);
     end
 
     if quit
@@ -371,7 +381,7 @@ if ~quit
     onset.rest(length(onset.rest)+1) = GetSecs - timeStartExperience;
     logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
     logoriginal{end}{2} = 'Rest';
-    [quit, keysPressed, timePressed] = displayCross(param.keyboard, window,param.durRest,0,0,'red',100);
+    [quit, keysPressed, timePressed] = displayCross(window, param, param.durRest,0,0,'red',100);
 end
 
 
@@ -382,6 +392,7 @@ logoriginal{end}{2} = 'STOP';
 % Save file
 savefile(param, logoriginal, onset);
 
+PsychPortAudio('Close', pahandle);
 Screen('CloseAll');
 disp('!!! FINISHED !!!');
 returnCode = 0;
