@@ -14,6 +14,13 @@ function [returnCode] = ld_sound_sequence_association(param)
 % CREATION OF THE WINDOW, initializing experiment
 [window, param.screenResolution] = createWindow(param);
 
+number_channels = param.number_channels;
+
+% initializes sound driver...the 1 pushes for low latency
+InitializePsychSound(1);
+% opens sound buffer
+pahandle = PsychPortAudio('Open', [], [], number_channels, []);
+
 onset = struct(...                              % onset vector         
     'rest',     [], ...
     'seq',      [], ...
@@ -60,8 +67,9 @@ for index_sound = 1:length(param.sounds)
         tmp_sound, ' -nostdin');
     disp(command)
     system(command);
-    [audio_signal{index_sound}, frequency{index_sound}] = ...
+    [audio_signal{index_sound},  frequency{index_sound}] = ...
         audioread(tmp_sound);
+    audio_signal{index_sound} = repmat(audio_signal{index_sound}, number_channels);
 end
 
 % Display first instruction
@@ -114,7 +122,8 @@ for i = 1:numel(learning_sequence_a_or_b)
     end
 
     index_sound = find(strcmp(param.sounds, tmp_sound));
-    
+    PsychPortAudio('FillBuffer', pahandle, audio_signal{index_sound}')
+
     screen_width = param.screenResolution(1);
     screen_height = param.screenResolution(2);
     if strcmp(LeftOrRightHand, 'left_hand')
@@ -146,15 +155,20 @@ for i = 1:numel(learning_sequence_a_or_b)
         [quit, ~, ~] = displayCross(window, param, white_cross_before_sound_duration, ...
                                             0, 0, 'white');
         if quit
+            logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+            logoriginal{end}{2} = 'STOP MANUALLY';
             Screen('CloseAll')
-            break;
+            PsychPortAudio('Close')
+            savefile(param,logoriginal,onset);
+            return;
         end
     
         % PLAY THE SOUND
         logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
         logoriginal{end}{2} = 'SoundPlayed';
         logoriginal{end}{3} = param.sounds{index_sound};
-        sound(audio_signal{index_sound}, frequency{index_sound});
+        PsychPortAudio('Start', pahandle, 1, 0);
+        PsychPortAudio('Stop', pahandle, 1);
         
         pause(sound_hand_delay)
 
@@ -233,7 +247,8 @@ for i = 1:numel(learning_sequence_a_or_b)
             logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
             logoriginal{end}{2} = 'SoundPlayed';
             logoriginal{end}{3} = param.sounds{index_sound};
-            sound(audio_signal{index_sound}, frequency{index_sound});
+            PsychPortAudio('Start', pahandle, 1,0);
+            PsychPortAudio('Stop', pahandle, 1);
             pause(3)
         else
             DrawFormattedText(window,'Let s try again','center','center',gold);
@@ -254,18 +269,7 @@ for i = 1:numel(learning_sequence_a_or_b)
     end
 end
 
+PsychPortAudio('Close', pahandle);
 Screen('CloseAll');
 % Save file.mat
-i_name = 1;
-output_file_name = [param.outputDir, param.subject, '_', param.task, '_', ...
-                                            num2str(i_name), '.mat'];
-while exist(output_file_name, 'file')
-    i_name = i_name+1;
-    output_file_name = [param.outputDir, param.subject, '_', param.task, ...
-                                    '_' , num2str(i_name), '.mat'];
-end
-save(output_file_name, 'logoriginal', 'param'); 
-
-returnCode = 0;
-
-end
+savefile(param,logoriginal,onset);
