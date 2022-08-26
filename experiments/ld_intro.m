@@ -68,7 +68,20 @@ learning_sequence_a_or_b = learning_sequence_a_or_b(...
 % LOOP: Learning sequences
 for i = 1:numel(learning_sequence_a_or_b)
     if quit
-        break
+        logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+        logoriginal{end}{2} = 'STOP MANUALLY';
+        Screen('CloseAll');
+        % Save file.mat
+        i_name = 1;
+        output_file_name = [param.outputDir, param.subject, '_', param.task, '_', ...
+                                                    num2str(i_name), '.mat'];
+        while exist(output_file_name, 'file')
+            i_name = i_name+1;
+            output_file_name = [param.outputDir, param.subject, '_', param.task, ...
+                                            '_' , num2str(i_name), '.mat'];
+        end
+        save(output_file_name, 'logoriginal', 'param');
+        return;
     end
 
     if learning_sequence_a_or_b(i) == 1
@@ -107,6 +120,9 @@ for i = 1:numel(learning_sequence_a_or_b)
     texture_hand = Screen('MakeTexture', window, image_hand);
 
     Screen('DrawTexture',window,texture_hand,[],hand_position);
+    Screen('TextSize', window, param.crossSize);
+    DrawFormattedText(window, '+', 'center', 'center', param.white);
+    Screen('TextSize', window, param.textSize);
     Screen('Flip', window);
     
     pause(show_hand_duration)
@@ -127,7 +143,20 @@ for i = 1:numel(learning_sequence_a_or_b)
     [quit, ~, ~] = displayCross(window, param, ...
                                         red_cross_duration, 0, 0, 'red', 100);
     if quit
-        break
+        logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+        logoriginal{end}{2} = 'STOP MANUALLY';
+        Screen('CloseAll');
+        % Save file.mat
+        i_name = 1;
+        output_file_name = [param.outputDir, param.subject, '_', param.task, '_', ...
+                                                    num2str(i_name), '.mat'];
+        while exist(output_file_name, 'file')
+            i_name = i_name+1;
+            output_file_name = [param.outputDir, param.subject, '_', param.task, ...
+                                            '_' , num2str(i_name), '.mat'];
+        end
+        save(output_file_name, 'logoriginal', 'param');
+        return;
     end
 
     % subject must type sequence once correctly
@@ -147,9 +176,22 @@ for i = 1:numel(learning_sequence_a_or_b)
                 [quit, key, timePressed] = displayCross(...
                     window, param, 0,1,0,'green', 100, ...
                     true, l_seqUsed);
-                if quit 
-                    break; 
-                end
+                    if quit
+                        logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+                        logoriginal{end}{2} = 'STOP MANUALLY';
+                        Screen('CloseAll');
+                        % Save file.mat
+                        i_name = 1;
+                        output_file_name = [param.outputDir, param.subject, '_', param.task, '_', ...
+                                                                    num2str(i_name), '.mat'];
+                        while exist(output_file_name, 'file')
+                            i_name = i_name+1;
+                            output_file_name = [param.outputDir, param.subject, '_', param.task, ...
+                                                            '_' , num2str(i_name), '.mat'];
+                        end
+                        save(output_file_name, 'logoriginal', 'param');
+                        return;
+                    end
 
                 strDecoded = ld_convertKeyCode(key, param.keyboard);
                 key = ld_convertOneKey(strDecoded);
@@ -185,8 +227,21 @@ for i = 1:numel(learning_sequence_a_or_b)
                     end
                 end
             end % End while loop: check if sequence is ok 
-            if quit 
-                break; 
+            if quit
+                logoriginal{end+1}{1} = num2str(GetSecs - timeStartExperience);
+                logoriginal{end}{2} = 'STOP MANUALLY';
+                Screen('CloseAll');
+                % Save file.mat
+                i_name = 1;
+                output_file_name = [param.outputDir, param.subject, '_', param.task, '_', ...
+                                                            num2str(i_name), '.mat'];
+                while exist(output_file_name, 'file')
+                    i_name = i_name+1;
+                    output_file_name = [param.outputDir, param.subject, '_', param.task, ...
+                                                    '_' , num2str(i_name), '.mat'];
+                end
+                save(output_file_name, 'logoriginal', 'param');
+                return;
             end
         end
     end
@@ -210,6 +265,6 @@ while exist(output_file_name, 'file')
     output_file_name = [param.outputDir, param.subject, '_', param.task, ...
                                     '_' , num2str(i_name), '.mat'];
 end
-save(output_file_name, 'logoriginal', 'param'); 
+save(output_file_name, 'logoriginal', 'param');
 
 returnCode = 0;
