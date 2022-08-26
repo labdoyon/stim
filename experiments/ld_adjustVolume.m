@@ -14,6 +14,12 @@ function [returnCode] = ld_adjustVolume(param)
 % CREATION OF THE WINDOW
 window = createWindow(param);
 
+number_channels = param.number_channels;
+
+% initializes sound driver...the 1 pushes for low latency
+InitializePsychSound(1);
+% opens sound buffer
+pahandle = PsychPortAudio('Open', [], [], number_channels, []);
 
 % Display instruction message
 Screen('TextFont', window, 'Arial');
@@ -37,7 +43,10 @@ for index_sound = 1:length(param.sounds)
     sound_i = param.sounds{index_sound};
     % Preload the sound
     sound_i_fullpath = ['stimuli\' sound_i];
-    [y,Fs] = audioread(sound_i_fullpath);
+    [y, Fs] = audioread(sound_i_fullpath);
+    y = repmat(y, number_channels);
+    % loads data into buffer
+    PsychPortAudio('FillBuffer', pahandle, y');
     output_sound = ['sound' num2str(index_sound) '.wav'];
     output_sound_fullpath = ['stimuli\' output_sound];
     copyfile(sound_i_fullpath, output_sound_fullpath)
@@ -53,11 +62,8 @@ for index_sound = 1:length(param.sounds)
     pause(.5)
 
     % Play the sound one first time
-    sound(y, Fs);
-    if param.repeat_sound_first_time
-        sound(y, Fs);
-    end
-    
+    PsychPortAudio('Start', pahandle, 1,0);
+    PsychPortAudio('Stop', pahandle, 1,0);
     sound_adjusted = false;
     while ~sound_adjusted
         timeStartReading = GetSecs;
@@ -81,8 +87,12 @@ for index_sound = 1:length(param.sounds)
         end
         disp(key)
         if key == 1
-            [y,Fs] = audioread(output_sound_fullpath);
-            sound(y, Fs);
+            [y, Fs] = audioread(output_sound_fullpath);
+            y = repmat(y,number_channels);
+
+            PsychPortAudio('FillBuffer', pahandle, y');
+            PsychPortAudio('Start', pahandle, 1,0);
+            PsychPortAudio('Stop', pahandle, 1);
         elseif key == 2
             if volume_adjustment_in_dB < 0
                 volume_adjustment_in_dB = volume_adjustment_in_dB + 5;
@@ -93,8 +103,11 @@ for index_sound = 1:length(param.sounds)
                 output_sound_fullpath, ' -nostdin');
             disp(command)
             system(command);
-            [y,Fs] = audioread(output_sound_fullpath);
-            sound(y, Fs);
+            [y, Fs] = audioread(output_sound_fullpath);
+            y = repmat(y,number_channels);
+            PsychPortAudio('FillBuffer', pahandle, y');
+            PsychPortAudio('Start', pahandle, 1,0);
+            PsychPortAudio('Stop', pahandle, 1);
         elseif key == 3
             volume_adjustment_in_dB = volume_adjustment_in_dB -5;
             command = horzcat('ffmpeg -loglevel quiet -y -i ', ...
@@ -103,8 +116,11 @@ for index_sound = 1:length(param.sounds)
                 output_sound_fullpath, ' -nostdin');
             disp(command)
             system(command);
-            [y,Fs] = audioread(output_sound_fullpath);
-            sound(y, Fs);
+            [y, Fs] = audioread(output_sound_fullpath);
+            y = repmat(y,number_channels);
+            PsychPortAudio('FillBuffer', pahandle, y');
+            PsychPortAudio('Start', pahandle, 1,0);
+            PsychPortAudio('Stop', pahandle, 1);
         elseif key == 4
             sound_adjusted = true;
             sound_adjustment_explicit(sound_i) = ...
@@ -132,4 +148,5 @@ save(output_file_name, 'sound_adjustment', 'sound_adjustment_explicit');
 
 returnCode = 0;
 
+PsychPortAudio('Close', pahandle);
 Screen('CloseAll')

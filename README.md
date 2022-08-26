@@ -29,3 +29,6 @@ to have meaningful data.
 The values in decibel for both sounds are relative to 1) the equipment used
 for the experiment and 2) the master system volume on the system at the time
 of the experiment
+
+Sometimes the first sound command of a task doesn't play. You can repeat the first sound command once. All other commands
+Should complete successfully.
